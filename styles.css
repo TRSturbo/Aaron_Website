@@ -1,0 +1,352 @@
+:root {
+    --bg-dark: #121212;
+    --bg-medium: #1E1E1E;
+    --bg-light: #2C2C2C;
+    --text-primary: #FFFFFF;
+    --text-secondary: #B0B0B0;
+    --accent-blue: #4285F4;
+    --accent-blue-hover: #5E97F6;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    line-height: 1.6;
+    scroll-behavior: smooth;
+}
+
+/* Navigation Styling */
+header {
+    position: fixed;
+    width: 100%;
+    background-color: rgba(30, 30, 30, 0.9);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+nav ul {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 1rem 0;
+}
+
+nav ul li {
+    margin: 0 1.5rem;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: 500;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: var(--accent-blue);
+}
+
+/* About Section */
+#about {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem 2rem;
+}
+
+.about-header {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+    max-width: 1200px;
+    margin-bottom: 3rem;
+    background-color: var(--bg-medium);
+    border-radius: 15px;
+    padding: 2rem;
+}
+
+.about-photo img {
+    width: 250px;
+    height: 250px;
+    border-radius: 15px;
+    object-fit: cover;
+    border: 4px solid var(--accent-blue);
+    margin-right: 2rem;
+    transition: transform 0.3s ease;
+}
+
+.about-photo img:hover {
+    transform: scale(1.05);
+}
+
+.about-title h1 {
+    color: var(--accent-blue);
+    font-size: 2.5rem;
+    text-align: center;
+    padding-left: 5px;
+}
+
+.about-content {
+    display: flex;
+    justify-content: center;
+    gap: 2rem;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.about-card {
+    flex: 1;
+    background-color: var(--bg-medium);
+    border-radius: 15px;
+    padding: 2rem;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    transition: all 0.3s ease;
+    border-left: 4px solid var(--accent-blue);
+}
+
+.about-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+
+.about-card h2 {
+    color: var(--accent-blue);
+    margin-bottom: 1rem;
+    border-bottom: 2px solid var(--accent-blue);
+    padding-bottom: 0.5rem;
+}
+
+.about-card p {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+:root {
+    --bg-dark: #121212;
+    --bg-medium: #1E1E1E;
+    --bg-light: #2C2C2C;
+    --text-primary: #FFFFFF;
+    --text-secondary: #B0B0B0;
+    --accent-blue: #4285F4;
+    --accent-blue-hover: #5E97F6;
+}
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Inter', 'Segoe UI', Roboto, sans-serif;
+    background-color: var(--bg-dark);
+    color: var(--text-primary);
+    line-height: 1.6;
+    scroll-behavior: smooth;
+}
+
+/* Navigation Styling */
+header {
+    position: fixed;
+    width: 100%;
+    background-color: rgba(30, 30, 30, 0.9);
+    backdrop-filter: blur(10px);
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+}
+
+nav ul {
+    display: flex;
+    justify-content: center;
+    list-style: none;
+    padding: 1rem 0;
+}
+
+nav ul li {
+    margin: 0 1.5rem;
+}
+
+nav ul li a {
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: 500;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+nav ul li a:hover {
+    color: var(--accent-blue);
+}
+
+/* Section Styling */
+section {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 4rem 2rem;
+    background-color: var(--bg-dark);
+}
+
+section > h2 {
+    color: var(--accent-blue);
+    margin-bottom: 2rem;
+    font-size: 2.5rem;
+    border-bottom: 2px solid var(--accent-blue);
+    padding-bottom: 0.5rem;
+    width: 100%;
+    max-width: 1200px;
+    text-align: center;
+}
+
+/* About Section */
+
+/* Experience Section */
+.experience-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 2rem;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.experience-card {
+    background-color: var(--bg-medium);
+    border-radius: 15px;
+    padding: 2rem;
+    width: calc(33.333% - 2rem);
+    transition: all 0.3s ease;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    border-left: 4px solid var(--accent-blue);
+    position: relative;
+    overflow: hidden;
+}
+
+.experience-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+
+.experience-card h3 {
+    color: var(--accent-blue);
+    margin-bottom: 0.5rem;
+    font-size: 1.5rem;
+}
+
+.experience-card h4 {
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+}
+
+.experience-card .duration {
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-bottom: 1rem;
+}
+
+.experience-card .location {
+    color: var(--text-secondary);
+    font-style: italic;
+    margin-bottom: 1rem;
+}
+
+.experience-card p:last-child {
+    color: var(--text-secondary);
+}
+
+/* Contact Section */
+.social-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 3rem;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.social-link {
+    color: var(--text-primary);
+    font-size: 3rem;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    position: relative;
+}
+
+.social-link:hover {
+    color: var(--accent-blue);
+    transform: scale(1.2);
+}
+
+.social-link::before {
+    content: attr(data-platform);
+    position: absolute;
+    bottom: -2rem;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--text-secondary);
+    font-size: 0.8rem;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.social-link:hover::before {
+    opacity: 1;
+}
+
+/* Responsive Design */
+@media (max-width: 1024px) {
+    .experience-card {
+        width: calc(50% - 2rem);
+    }
+}
+
+@media (max-width: 768px) {
+    .experience-card {
+        width: 100%;
+    }
+}
+
+/* Photo Flip Animation */
+.photo-flip-container {
+    perspective: 1000px;
+    position: relative;
+    width: 250px;
+    height: 250px;
+    cursor: pointer;
+}
+
+.front-photo, .back-photo {
+    width: 250px;
+    height: 250px;
+    border-radius: 15px;
+    object-fit: cover;
+    border: 4px solid var(--accent-blue);
+    position: absolute;
+    backface-visibility: hidden;
+    transition: transform 0.8s;
+}
+
+.back-photo {
+    transform: rotateY(180deg);
+}
+
+.photo-flip-container:hover .front-photo {
+    transform: rotateY(180deg);
+}
+
+.photo-flip-container:hover .back-photo {
+    transform: rotateY(0);
+}
