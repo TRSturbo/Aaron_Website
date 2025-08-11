@@ -18,6 +18,18 @@
     --transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
+html, body {
+    background-color: #121212; /* Dark background */
+    overscroll-behavior-y: none;
+    overscroll-behavior-x: none;
+    -webkit-tap-highlight-color: rgba(4, 161, 255, 0.3); /* Optional: adds a subtle highlight on touch */
+}
+
+/* For mobile browsers */
+meta[name="theme-color"] {
+    content: #04A1FF;
+}
+
 * {
     margin: 0;
     padding: 0;
