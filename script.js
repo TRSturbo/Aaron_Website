@@ -187,17 +187,28 @@
         // Navigation active state on scroll
         function setupNavigation() {
             const sections = document.querySelectorAll('section');
-            const navLinks = document.querySelectorAll('.nav-link');
+            const navLinks = document.querySelectorAll('.nav-link');     
 
             window.addEventListener('scroll', () => {
                 let current = '';
+                const scrollPosition = window.pageYOffset + 200; // Add offset for better trigger point
+             
+                // Check if we're at the bottom of the page
+                const isAtBottom = window.innerHeight + window.pageYOffset >= document.body.offsetHeight - 10;
+             
                 sections.forEach(section => {
                     const sectionTop = section.offsetTop;
-                    const sectionHeight = section.clientHeight;
-                    if (pageYOffset >= sectionTop - 200) {
+                    const sectionBottom = sectionTop + section.clientHeight;
+                 
+                    // If at bottom of page, set current to the last section
+                    if (isAtBottom) {
+                        current = sections[sections.length - 1].getAttribute('id');
+                    }
+                    // Otherwise, check if scroll position is within this section
+                    else if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
                         current = section.getAttribute('id');
                     }
-                });
+                });     
 
                 navLinks.forEach(link => {
                     link.classList.remove('active');
