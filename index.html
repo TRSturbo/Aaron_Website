@@ -6,78 +6,227 @@
     <title>Aaron Tharpe - Engineering Manager & Developer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="script.js"></script>
 </head>
 <body>
-    <header>
-        <nav>
-            <ul>
-                <li><a href="#about">About</a></li>
-                <li><a href="#experience">Experience</a></li>
-                <li><a href="#contact">Contact</a></li>
-            </ul>
-        </nav>
-    </header>
+    <div class="bg-animation" id="bgAnimation"></div>
+    <div class="scroll-indicator" id="scrollIndicator"></div>
     
-    <main>
-        <section id="about">
-            <div class="about-header">
-                <div class="about-photo">
-                    <div class="photo-flip-container">
-                        <img id="profile-photo" src="aaron.jpg" alt="Aaron Tharpe Profile" loading="lazy" class="front-photo">
-                        <img id="alternate-photo" src="aaron-alt.png" alt="Aaron Tharpe Alternate" loading="lazy" class="back-photo">
+    <nav>
+        <ul>
+            <li><a href="#hero" class="nav-link active">Home</a></li>
+            <li><a href="#about" class="nav-link">About</a></li>
+            <li><a href="#experience" class="nav-link">Experience</a></li>
+            <li><a href="#contact" class="nav-link">Contact</a></li>
+        </ul>
+    </nav>
+
+    <section class="hero" id="hero">
+        <div class="hero-content">
+            <div class="hero-avatar">
+                <img src="aaron.jpg" alt="Aaron Tharpe" id="heroImage" onerror="this.style.display='none'">
+            </div>
+            <h1>Aaron Tharpe</h1>
+            <p class="subtitle">Engineering Manager • Passionate Developer • Collaborative Leader</p>
+            <a href="#about" class="cta-button">
+                <span>Discover My Journey</span>
+                <i class="fas fa-arrow-down"></i>
+            </a>
+        </div>
+    </section>
+
+    <div class="circuit-divider">
+        <svg class="circuit-svg" viewBox="0 0 1200 200" xmlns="http://www.w3.org/2000/svg">
+            <defs>
+                <linearGradient id="circuitGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                    <stop offset="0%" style="stop-color:var(--accent-primary);stop-opacity:0.3"/>
+                    <stop offset="50%" style="stop-color:var(--accent-secondary);stop-opacity:0.8"/>
+                    <stop offset="100%" style="stop-color:var(--accent-tertiary);stop-opacity:0.3"/>
+                </linearGradient>
+            </defs>
+            
+            <!-- Main circuit paths -->
+            <path class="circuit-path" d="M0,100 Q200,50 400,100 T800,100 Q1000,150 1200,100" />
+            <path class="circuit-path" d="M0,120 L300,120 Q400,80 500,120 L800,120 Q900,160 1200,120" style="animation-delay: -2s"/>
+            <path class="circuit-path" d="M0,80 Q150,120 300,80 L600,80 Q800,40 1200,80" style="animation-delay: -4s"/>
+            
+            <!-- Circuit nodes -->
+            <circle class="circuit-node" cx="200" cy="100" r="3" style="animation-delay: 0s"/>
+            <circle class="circuit-node" cx="400" cy="100" r="2.5" style="animation-delay: 0.5s"/>
+            <circle class="circuit-node" cx="600" cy="100" r="3" style="animation-delay: 1s"/>
+            <circle class="circuit-node" cx="800" cy="100" r="2.5" style="animation-delay: 1.5s"/>
+            <circle class="circuit-node" cx="1000" cy="100" r="3" style="animation-delay: 2s"/>
+            
+            <!-- Connection lines -->
+            <line class="circuit-connection" x1="200" y1="100" x2="300" y2="120" style="animation-delay: 0.2s"/>
+            <line class="circuit-connection" x1="400" y1="100" x2="500" y2="120" style="animation-delay: 0.7s"/>
+            <line class="circuit-connection" x1="600" y1="100" x2="600" y2="80" style="animation-delay: 1.2s"/>
+            <line class="circuit-connection" x1="800" y1="100" x2="800" y2="120" style="animation-delay: 1.7s"/>
+            
+            <!-- Additional decorative elements -->
+            <rect class="circuit-node" x="350" y="95" width="10" height="10" rx="2" style="animation-delay: 0.8s"/>
+            <rect class="circuit-node" x="750" y="115" width="8" height="8" rx="1" style="animation-delay: 1.3s"/>
+            <polygon class="circuit-node" points="550,85 560,95 550,105 540,95" style="animation-delay: 1.8s"/>
+        </svg>
+    </div>
+
+    <section id="about">
+        <div class="section-header">
+            <h2 class="section-title">About Me</h2>
+            <p class="section-subtitle">Passionate about building exceptional teams and cutting-edge solutions</p>
+        </div>
+        <div class="about-cards">
+            <div class="about-card">
+                <i class="fas fa-users card-icon"></i>
+                <h3 class="card-title">Leadership Excellence</h3>
+                <p class="card-text">
+                    As an <strong>Engineering Manager and Developer</strong>, I lead <strong>scalable and efficient teams</strong> to deliver <strong>high-quality solutions</strong>. I thrive in all aspects of management, including <strong>hiring, mentoring, performance management, and shaping technical roadmaps</strong>, while fostering a <strong>collaborative team culture</strong>. Pairing strong foundational expertise with real-world <strong>emotional intelligence</strong>, I effectively understand and address team dynamics and individual challenges.
+                </p>
+            </div>
+            <div class="about-card">
+                <i class="fas fa-code card-icon"></i>
+                <h3 class="card-title">Technical Expertise</h3>
+                <p class="card-text">
+                    I possess a strong full-stack foundation, specializing in <strong>React</strong>, <strong>Node.js</strong>, <strong>Angular</strong>, and both <strong>native and React Native mobile development</strong>. My proficiency spans <strong>Azure</strong>, <strong>Google Cloud</strong>, <strong>CosmosDB</strong>, and <strong>SQL</strong>. I excel in full-scale application development, establishing best practices for <strong>test automation</strong>, <strong>code quality</strong>, and <strong>security</strong>, and driving projects from discovery to production through seamless cross-functional collaboration.
+                </p>
+            </div>
+            <div class="about-card">
+                <i class="fas fa-heart card-icon"></i>
+                <h3 class="card-title">Personal Passion</h3>
+                <p class="card-text">
+                    Beyond my professional roles, I am passionate about <strong>continuous learning</strong>, particularly in <strong>smart home automation</strong> (YAML, VMs, networking). My dedication extends to <strong>mentorship</strong>, helping individuals reach their full potential. As a father, I've honed patience and calm problem-solving. I also maintain a keen interest in <strong>electric vehicle technology</strong>, reflecting my broader curiosity for innovation.
+                </p>
+            </div>
+        </div>
+    </section>
+
+    <div class="circuit-divider">
+        <svg class="circuit-svg" viewBox="0 0 1200 200" xmlns="http://www.w3.org/2000/svg">            
+            <!-- Reverse pattern for variety -->
+            <path class="circuit-path" d="M1200,100 Q1000,150 800,100 T400,100 Q200,50 0,100" />
+            <path class="circuit-path" d="M1200,80 L900,80 Q800,120 700,80 L400,80 Q300,40 0,80" style="animation-delay: -1s"/>
+            <path class="circuit-path" d="M1200,120 Q1050,80 900,120 L600,120 Q400,160 0,120" style="animation-delay: -3s"/>
+            
+            <!-- Nodes -->
+            <circle class="circuit-node" cx="1000" cy="100" r="3" style="animation-delay: 0.3s"/>
+            <circle class="circuit-node" cx="800" cy="100" r="2.5" style="animation-delay: 0.8s"/>
+            <circle class="circuit-node" cx="600" cy="100" r="3" style="animation-delay: 1.3s"/>
+            <circle class="circuit-node" cx="400" cy="100" r="2.5" style="animation-delay: 1.8s"/>
+            <circle class="circuit-node" cx="200" cy="100" r="3" style="animation-delay: 2.3s"/>
+            
+            <!-- Connections -->
+            <line class="circuit-connection" x1="1000" y1="100" x2="900" y2="80" style="animation-delay: 0.5s"/>
+            <line class="circuit-connection" x1="800" y1="100" x2="700" y2="80" style="animation-delay: 1s"/>
+            <line class="circuit-connection" x1="600" y1="100" x2="600" y2="120" style="animation-delay: 1.5s"/>
+            <line class="circuit-connection" x1="400" y1="100" x2="400" y2="80" style="animation-delay: 2s"/>
+            
+            <rect class="circuit-node" x="850" y="115" width="10" height="10" rx="2" style="animation-delay: 1.1s"/>
+            <rect class="circuit-node" x="450" y="95" width="8" height="8" rx="1" style="animation-delay: 1.6s"/>
+        </svg>
+    </div>
+
+    <section id="experience">
+        <div class="section-header">
+            <h2 class="section-title">Professional Journey</h2>
+            <p class="section-subtitle">Building exceptional software, leading amazing teams and connecting with individuals</p>
+        </div>
+        <div class="experience-timeline">
+            <div class="timeline-line"></div>
+            <div id="timelineContainer"></div>
+        </div>
+    </section>
+
+    <div class="circuit-divider">
+        <svg class="circuit-svg" viewBox="0 0 1200 200" xmlns="http://www.w3.org/2000/svg">
+            <!-- Complex branching pattern -->
+            <path class="circuit-path" d="M0,100 L200,100 Q250,50 300,100 L500,100 Q600,150 700,100 L900,100 Q1000,50 1200,100" />
+            <path class="circuit-path" d="M300,100 L300,50 Q400,30 500,50 L500,100" style="animation-delay: -2.5s"/>
+            <path class="circuit-path" d="M700,100 L700,150 Q800,170 900,150 L900,100" style="animation-delay: -1.5s"/>
+            <path class="circuit-path" d="M0,130 Q300,110 600,130 Q900,150 1200,130" style="animation-delay: -3.5s"/>
+            
+            <!-- Junction nodes -->
+            <circle class="circuit-node" cx="300" cy="100" r="4" style="animation-delay: 0.2s"/>
+            <circle class="circuit-node" cx="500" cy="100" r="3.5" style="animation-delay: 0.7s"/>
+            <circle class="circuit-node" cx="700" cy="100" r="4" style="animation-delay: 1.2s"/>
+            <circle class="circuit-node" cx="900" cy="100" r="3.5" style="animation-delay: 1.7s"/>
+            
+            <!-- Branch connections -->
+            <line class="circuit-connection" x1="300" y1="100" x2="300" y2="50" style="animation-delay: 0.4s"/>
+            <line class="circuit-connection" x1="500" y1="50" x2="500" y2="100" style="animation-delay: 0.9s"/>
+            <line class="circuit-connection" x1="700" y1="100" x2="700" y2="150" style="animation-delay: 1.4s"/>
+            <line class="circuit-connection" x1="900" y1="150" x2="900" y2="100" style="animation-delay: 1.9s"/>
+            
+            <!-- Complex nodes -->
+            <polygon class="circuit-node" points="400,45 410,55 400,65 390,55" style="animation-delay: 1.4s"/>
+            <polygon class="circuit-node" points="800,145 810,155 800,165 790,155" style="animation-delay: 1.9s"/>
+            <rect class="circuit-node" x="595" y="125" width="10" height="10" rx="2" style="animation-delay: 2.4s"/>
+        </svg>
+    </div>
+
+    <section id="contact">
+        <div class="section-header">
+            <h2 class="section-title">Let's Connect</h2>
+            <p class="section-subtitle">Ready to collaborate on something amazing?</p>
+        </div>
+        <div class="contact-grid">
+            <a href="https://www.linkedin.com/in/aaron-tharpe-3a501490/" class="social-card" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-linkedin social-icon"></i>
+                <div class="social-name">LinkedIn</div>
+                <div class="social-handle">Connect professionally</div>
+            </a>
+            <a href="https://github.com/trsturbo" class="social-card" target="_blank" rel="noopener noreferrer">
+                <i class="fab fa-github social-icon"></i>
+                <div class="social-name">GitHub</div>
+                <div class="social-handle">View my code</div>
+            </a>
+            <a href="mailto:aaron@tharpefamily.com" class="social-card">
+                <i class="fas fa-envelope social-icon"></i>
+                <div class="social-name">Email</div>
+                <div class="social-handle">aaron@tharpefamily.com</div>
+            </a>
+        </div>
+    </section>
+
+        <!-- Tetris Modal -->
+    <div class="tetris-modal" id="tetrisModal">
+        <div class="tetris-container">
+            <button class="close-tetris" onclick="closeTetris()">&times;</button>
+            <div class="tetris-header">
+                <h2 class="tetris-title">🎮 TETRIS</h2>
+                <p class="tetris-subtitle">Konami Code Activated! You found the secret game!</p>
+            </div>
+            <div class="tetris-game">
+                <canvas class="tetris-board" id="tetrisBoard" width="300" height="600"></canvas>
+                <div class="tetris-info">
+                    <div class="info-panel">
+                        <div class="info-title">Score</div>
+                        <div class="score-value" id="scoreValue">0</div>
+                    </div>
+                    <div class="info-panel">
+                        <div class="info-title">Level</div>
+                        <div class="level-value" id="levelValue">1</div>
+                    </div>
+                    <div class="info-panel">
+                        <div class="info-title">Lines</div>
+                        <div class="lines-value" id="linesValue">0</div>
+                    </div>
+                    <div class="info-panel">
+                        <div class="info-title">Controls</div>
+                        <div class="tetris-controls">
+                            ← → Move<br>
+                            ↓ Soft Drop<br>
+                            ↑ Rotate<br>
+                            Space Hard Drop<br>
+                            P Pause
+                        </div>
                     </div>
                 </div>
-                <div class="about-title">
-                    <h1>Welcome! I am Aaron Tharpe.</h1>
-                </div>
             </div>
-            <div class="about-content">
-                <div class="about-card professional-about">
-                    <h2>Professional About Me</h2>
-                    <p>
-                        Experienced Engineering Manager and seasoned developer with a passion for building impactful web and mobile experiences. Over a year and a half as an Engineering Manager, and more than three years in team leadership roles, I've had the privilege of leading diverse teams, including larger Front-End and smaller Mobile teams, to deliver high-quality solutions.
-                    </p>
-                    <p>
-                        My management approach encompasses hiring, mentoring, performance management, and shaping technical roadmaps, all while fostering a collaborative and positive team culture. I thrive in consistently improving of our team's intake process for new work and collaborating closely with stakeholders to significantly streamline project definition and delivery, ensuring timely and high-quality solutions.
-                    </p>
-                    <p>
-                        While my focus has shifted predominantly towards management, I maintain a strong understanding of web UI, web frameworks, and both native and hybrid mobile app development. I'm adept at full-scale application development, establishing best practices, and leveraging Agile methodologies to drive successful project delivery.
-                    </p>
-                </div>
-                
-                <div class="about-card personal-about">
-                    <h2>Personal Side</h2>
-                    <p>
-                        Beyond the world of code and management, I'm an avid enthusiast of continuous learning and personal growth. When I'm not solving technical challenges or leading teams, you'll likely find me exploring new technologies, working on personal projects, or diving into interesting technical podcasts and books.
-                    </p>
-                    <p>
-                        I'm passionate about mentorship, believing that sharing knowledge is key to both personal and collective growth. My interests extend beyond tech, including being a dedicated father, automation and finding creative ways to blend technology with personal passions. One example is my avid passion for smart home configuration and development to make every day life at home convenient and secure.
-                    </p>
-                    <p>
-                        Lifelong learning is more than a professional motto for me - it's a way of life. Whether it's picking up a new programming language, exploring emerging tech trends, or understanding the human side of technology, I'm always eager to expand my horizons.
-                    </p>
-                </div>
-            </div>
-        </section>
-
-        <section id="experience">
-            <h2>Professional Experience</h2>
-            <div id="experience-cards" class="experience-container">
-                <!-- Experience cards will be dynamically added here -->
-            </div>
-        </section>
-
-        <section id="contact">
-            <h2>Connect With Me</h2>
-            <div id="social-links" class="social-container">
-                <!-- Social links will be dynamically added here -->
-            </div>
-        </section>
-    </main>
-
-    <script src="script.js"></script>
+        </div>
+    </div>
 </body>
 </html>
+    
