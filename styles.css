@@ -504,7 +504,7 @@ section {
     }
 
     .timeline-dot {
-        left: 2rem;
+        left: -2rem;
     }
     .tetris-game {
         flex-direction: column;
