@@ -1,5 +1,12 @@
 {
- "name": "App",
+ "name": "Aaron Tharpe",
+ "short_name": "AaronT",
+ "description": "Aaron Tharpe's Personal Website!",
+ "theme_color": "#04A1FF",
+ "background_color": "#000000",
+ "display": "browser",
+ "scope": "/",
+ "start_url": "/",
  "icons": [
   {
    "src": "\/android-icon-36x36.png",
