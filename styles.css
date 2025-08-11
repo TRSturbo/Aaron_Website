@@ -68,7 +68,7 @@ meta[name="theme-color"] {
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -1;
+    z-index: -1; /* Ensure it stays behind everything */
     overflow: hidden;
 }
 
@@ -91,13 +91,16 @@ nav {
     top: 2rem;
     left: 50%;
     transform: translateX(-50%);
-    z-index: 1000;
+    z-index: 9999; /* Increased from 1000 to 9999 */
     background: var(--bg-glass);
     backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px); /* Safari support */
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 50px;
     padding: 0.8rem 2rem;
     transition: var(--transition);
+    isolation: isolate; /* Creates new stacking context */
+    will-change: transform; /* Optimizes for animations */
 }
 
 nav ul {
@@ -220,6 +223,7 @@ section {
     overflow: hidden;
     background: var(--bg-primary);
     margin: 0;
+    z-index: 1;
 }
 
 .circuit-svg {
@@ -564,8 +568,8 @@ section {
     background: var(--gradient-primary);
     transform-origin: left;
     transform: scaleX(0);
-    z-index: 1001;
- }
+    z-index: 9998; /* Just below navigation */
+}
 
 /* Tetris Game Modal */
         .tetris-modal {
