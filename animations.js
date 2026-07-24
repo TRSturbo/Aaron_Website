@@ -76,8 +76,8 @@
         return { flowLines: 4, topologyNodes: 12, blueprintLayers: 1 };
     }
 
-    function shouldDrawScene(scene) {
-        return scene.interactive || scene.visible;
+    function shouldDrawScene(scene, documentVisible = true) {
+        return documentVisible && (scene.interactive || scene.visible);
     }
 
     function drawFlow(scene, time) {
@@ -214,7 +214,7 @@
         let documentVisible = !documentRef.hidden;
         const drawFrame = time => {
             scenes.forEach(scene => {
-                if (shouldDrawScene(scene)) registry[pack].draw(scene, scene.mode === 'static' ? 0 : time);
+                if (shouldDrawScene(scene, documentVisible)) registry[pack].draw(scene, scene.mode === 'static' ? 0 : time);
             });
             if (documentVisible && scenes.some(scene => scene.mode !== 'static')) {
                 frameId = windowRef.requestAnimationFrame(drawFrame);
@@ -225,7 +225,7 @@
             windowRef.cancelAnimationFrame(frameId);
             frameId = 0;
             scenes.forEach(scene => {
-                if (shouldDrawScene(scene)) registry[pack].draw(scene, 0);
+                if (shouldDrawScene(scene, documentVisible)) registry[pack].draw(scene, 0);
             });
             if (documentVisible && scenes.some(scene => scene.mode !== 'static')) {
                 frameId = windowRef.requestAnimationFrame(drawFrame);

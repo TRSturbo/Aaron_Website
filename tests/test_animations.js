@@ -61,4 +61,6 @@ test('only the hero or a visible companion is drawn', () => {
     assert.equal(shouldDrawScene({ interactive: true, visible: false }), true);
     assert.equal(shouldDrawScene({ interactive: false, visible: false }), false);
     assert.equal(shouldDrawScene({ interactive: false, visible: true }), true);
+    assert.equal(shouldDrawScene({ interactive: true, visible: false }, false), false);
+    assert.equal(shouldDrawScene({ interactive: false, visible: true }, false), false);
 });
