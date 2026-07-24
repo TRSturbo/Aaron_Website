@@ -230,13 +230,31 @@ def main():
         None,
     )
     check(
-        restart_button and restart_button.get("aria-label") == "Restart game",
-        "Tetris touch controls need an accessible Restart button",
+        restart_button
+        and restart_button.get("aria-label") == "Restart game"
+        and "hidden" in restart_button,
+        "Tetris touch Restart must be hidden until game over",
         failures,
     )
     check(
-        re.search(r"case 'restart':\s*tetrisGame\.restart\(\);", script),
-        "Tetris touch actions must restart after game over",
+        re.search(
+            r"(?ms)gameOver\(\)\s*\{.*?restartButton\.hidden\s*=\s*false\s*;",
+            script,
+        ),
+        "Game over must reveal the touch Restart button",
+        failures,
+    )
+    check(
+        re.search(r"(?ms)restart\(\)\s*\{.*?restartButton\.hidden\s*=\s*true\s*;", script),
+        "Restarting must hide the touch Restart button again",
+        failures,
+    )
+    check(
+        re.search(
+            r"(?ms)case 'restart':\s*if\s*\(!tetrisGame\.gameRunning\)\s*\{\s*tetrisGame\.restart\(\);\s*\}\s*return\s*;",
+            script,
+        ),
+        "Touch Restart must be a no-op while a game is active",
         failures,
     )
     check(

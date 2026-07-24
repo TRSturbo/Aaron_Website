@@ -305,6 +305,8 @@
                 this.lastTime = 0;
                 this.gameRunning = false;
                 this.isPaused = false;
+                this.restartButton = document.getElementById('restartTetris');
+                this.restartButton.hidden = true;
                 
                 this.colors = [
                     '#000000', // empty
@@ -521,6 +523,7 @@
             
             gameOver() {
                 this.gameRunning = false;
+                this.restartButton.hidden = false;
                 this.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
                 this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
                 
@@ -534,6 +537,7 @@
             }
             
             restart() {
+                this.restartButton.hidden = true;
                 this.board = Array(this.rows).fill().map(() => Array(this.cols).fill(0));
                 this.score = 0;
                 this.lines = 0;
@@ -579,8 +583,10 @@
                     tetrisGame.pause();
                     break;
                 case 'restart':
-                    tetrisGame.restart();
-                    break;
+                    if (!tetrisGame.gameRunning) {
+                        tetrisGame.restart();
+                    }
+                    return;
             }
 
             tetrisGame.draw();
