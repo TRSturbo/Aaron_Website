@@ -127,6 +127,14 @@ def main():
         failures,
     )
     check(
+        not re.search(
+            r"(?ms)^html\s*,\s*body\s*\{[^}]*overscroll-behavior-y\s*:\s*none",
+            styles,
+        ),
+        "Document root must not suppress native vertical wheel scrolling",
+        failures,
+    )
+    check(
         "function setupAnchorScrolling()" in script
         and "setupAnchorScrolling();" in script
         and "scrollIntoView" in script,
