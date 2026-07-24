@@ -4,6 +4,7 @@ const {
     PACK_IDS,
     selectAnimationPack,
     resolveSceneMode,
+    createPackRegistry,
 } = require('../animations.js');
 
 test('pack registry exposes the three approved identifiers', () => {
@@ -36,4 +37,10 @@ test('coarse and narrow devices use an ambient hero', () => {
 test('fine-pointer desktop hero remains interactive', () => {
     assert.equal(resolveSceneMode({ reducedMotion: false, coarsePointer: false, narrowViewport: false, interactive: true }), 'interactive');
     assert.equal(resolveSceneMode({ reducedMotion: false, coarsePointer: false, narrowViewport: false, interactive: false }), 'ambient');
+});
+
+test('renderer registry supplies every selected pack', () => {
+    const registry = createPackRegistry();
+    assert.deepEqual(Object.keys(registry), PACK_IDS);
+    PACK_IDS.forEach(id => assert.equal(typeof registry[id].draw, 'function'));
 });

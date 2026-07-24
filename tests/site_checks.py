@@ -189,6 +189,16 @@ def main():
         "All approved animation packs must be registered",
         failures,
     )
+    for lifecycle_marker in (
+        "requestAnimationFrame",
+        "visibilitychange",
+        "IntersectionObserver",
+        "ResizeObserver",
+        "prefers-reduced-motion: reduce",
+        "pointermove",
+    ):
+        check(lifecycle_marker in animations, f"Animation lifecycle is missing {lifecycle_marker}", failures)
+    check("preventDefault" not in animations, "Animation code must not cancel native input", failures)
 
     check(
         len(parser.dialogs) == 1 and parser.dialogs[0].get("aria-modal") == "true",
