@@ -15,6 +15,30 @@
     }
 })(typeof window !== 'undefined' ? window : undefined, () => {
     const PACK_IDS = Object.freeze(['flow', 'topology', 'blueprint']);
+    const FLOW_SIGNAL_OFFSETS = Object.freeze([-2, 0, 2]);
+    const BLUEPRINT_LAYERS = Object.freeze([
+        Object.freeze({ depth: -42, angle: -8, parallax: 0.35, drift: 1.2, phase: 0.4, opacity: 0.12 }),
+        Object.freeze({ depth: 0, angle: -4, parallax: 0.65, drift: 1.7, phase: 2.1, opacity: 0.21 }),
+        Object.freeze({ depth: 42, angle: 0, parallax: 0.95, drift: 2.1, phase: 4.2, opacity: 0.30 }),
+    ]);
+    const BLUEPRINT_TRACES = Object.freeze([
+        Object.freeze([
+            Object.freeze({ x: -0.48, y: -0.18 }),
+            Object.freeze({ x: -0.20, y: -0.18 }),
+            Object.freeze({ x: -0.20, y: 0.06 }),
+            Object.freeze({ x: 0.08, y: 0.06 }),
+            Object.freeze({ x: 0.08, y: 0.20 }),
+            Object.freeze({ x: 0.46, y: 0.20 }),
+        ]),
+        Object.freeze([
+            Object.freeze({ x: -0.44, y: 0.16 }),
+            Object.freeze({ x: -0.08, y: 0.16 }),
+            Object.freeze({ x: -0.08, y: -0.08 }),
+            Object.freeze({ x: 0.22, y: -0.08 }),
+            Object.freeze({ x: 0.22, y: -0.20 }),
+            Object.freeze({ x: 0.44, y: -0.20 }),
+        ]),
+    ]);
 
     function selectAnimationPack(search = '', random = Math.random) {
         const override = new URLSearchParams(search).get('animation');
@@ -80,28 +104,49 @@
         return documentVisible && (scene.interactive || scene.visible);
     }
 
+    function getFlowY(scene, line, x, time) {
+        const { height, pointer, mode } = scene;
+        const { flowLines } = getSceneComplexity(scene);
+        const linePosition = flowLines === 1 ? 4 : line * 8 / (flowLines - 1);
+        const base = height * (0.2 + linePosition * 0.078);
+        let y = base + Math.sin(x * 0.016 + time * 0.00032 + line * 0.72) * 10;
+        y += Math.sin(x * 0.006 - time * 0.00017 + line) * 7;
+        if (mode === 'interactive' && pointer.active) {
+            const influence = Math.exp(-Math.pow(x - pointer.x, 2) / 15000);
+            y += (pointer.y - y) * influence * 0.52;
+        }
+        return y;
+    }
+
     function drawFlow(scene, time) {
-        const { context, width, height, pointer, mode } = scene;
+        const { context, width, height } = scene;
         const { flowLines } = getSceneComplexity(scene);
         const primaryLine = flowLines === 9 ? 4 : Math.floor(flowLines / 2);
         context.clearRect(0, 0, width, height);
-        const interactive = mode === 'interactive' && pointer.active;
         for (let line = 0; line < flowLines; line += 1) {
             context.beginPath();
             for (let x = -10; x <= width + 10; x += 8) {
-                const linePosition = flowLines === 1 ? 4 : line * 8 / (flowLines - 1);
-                const base = height * (0.2 + linePosition * 0.078);
-                let y = base + Math.sin(x * 0.016 + time * 0.00032 + line * 0.72) * 10;
-                y += Math.sin(x * 0.006 - time * 0.00017 + line) * 7;
-                if (interactive) {
-                    const influence = Math.exp(-Math.pow(x - pointer.x, 2) / 15000);
-                    y += (pointer.y - y) * influence * 0.52;
-                }
+                const y = getFlowY(scene, line, x, time);
                 x === -10 ? context.moveTo(x, y) : context.lineTo(x, y);
             }
             context.strokeStyle = `rgba(48, 203, 255, ${line === primaryLine ? 0.34 : 0.17})`;
             context.lineWidth = line === primaryLine ? 1.5 : 0.75;
             context.stroke();
+        }
+        const routePointCount = Math.floor((width + 20) / 8) + 1;
+        const signalCount = scene.interactive ? FLOW_SIGNAL_OFFSETS.length : 2;
+        for (let signal = 0; signal < signalCount; signal += 1) {
+            const line = Math.max(0, Math.min(
+                flowLines - 1,
+                primaryLine + FLOW_SIGNAL_OFFSETS[signal],
+            ));
+            const routePoint = (Math.floor(time * 0.01) + signal * 13) % routePointCount;
+            const x = -10 + routePoint * 8;
+            const y = getFlowY(scene, line, x, time);
+            context.fillStyle = signal === 1 ? '#d9faff' : 'rgba(108, 225, 255, 0.78)';
+            context.beginPath();
+            context.arc(x, y, signal === 1 ? 2.6 : 1.9, 0, Math.PI * 2);
+            context.fill();
         }
     }
 
@@ -142,15 +187,24 @@
         const { context, width, height, pointer, mode } = scene;
         const { blueprintLayers } = getSceneComplexity(scene);
         context.clearRect(0, 0, width, height);
-        const offsetX = mode === 'interactive' && pointer.active ? (pointer.x / width - 0.5) * 18 : 0;
-        const offsetY = mode === 'interactive' && pointer.active ? (pointer.y / height - 0.5) * 12 : 0;
+        const pointerX = mode === 'interactive' && pointer.active ? (pointer.x / width - 0.5) * 18 : 0;
+        const pointerY = mode === 'interactive' && pointer.active ? (pointer.y / height - 0.5) * 12 : 0;
+        const firstLayer = Math.floor((BLUEPRINT_LAYERS.length - blueprintLayers) / 2);
+        const lastLayer = firstLayer + blueprintLayers;
         context.save();
-        context.translate(width / 2 + offsetX, height * 0.55 + offsetY);
-        [-42, 0, 42].slice((3 - blueprintLayers) / 2, (3 + blueprintLayers) / 2).forEach((depth, layer) => {
+        context.translate(width / 2, height * 0.55);
+        for (let layerIndex = firstLayer; layerIndex < lastLayer; layerIndex += 1) {
+            const layer = BLUEPRINT_LAYERS[layerIndex];
+            const driftX = Math.sin(time * 0.00013 + layer.phase) * layer.drift;
+            const driftY = Math.cos(time * 0.00011 + layer.phase) * layer.drift * 0.65;
             context.save();
-            context.translate(depth * 0.35, depth * -0.22);
-            context.rotate((-8 + layer * 4) * Math.PI / 180);
-            context.strokeStyle = `rgba(55, 203, 255, ${0.12 + layer * 0.09})`;
+            context.translate(
+                layer.depth * 0.35 + pointerX * layer.parallax + driftX,
+                layer.depth * -0.22 + pointerY * layer.parallax + driftY,
+            );
+            context.rotate(layer.angle * Math.PI / 180);
+            context.strokeStyle = `rgba(55, 203, 255, ${layer.opacity})`;
+            context.lineWidth = 0.75;
             for (let x = -width * 0.55; x <= width * 0.55; x += 30) {
                 context.beginPath();
                 context.moveTo(x, -height * 0.28);
@@ -163,13 +217,49 @@
                 context.lineTo(width * 0.55, y);
                 context.stroke();
             }
+            for (let traceIndex = 0; traceIndex < BLUEPRINT_TRACES.length; traceIndex += 1) {
+                const trace = BLUEPRINT_TRACES[traceIndex];
+                context.beginPath();
+                context.moveTo(trace[0].x * width, trace[0].y * height);
+                for (let pointIndex = 1; pointIndex < trace.length; pointIndex += 1) {
+                    context.lineTo(trace[pointIndex].x * width, trace[pointIndex].y * height);
+                }
+                context.strokeStyle = `rgba(84, 217, 255, ${layer.opacity + 0.14})`;
+                context.lineWidth = 1.15;
+                context.stroke();
+            }
+            const signalTrace = BLUEPRINT_TRACES[layerIndex % BLUEPRINT_TRACES.length];
+            let traceLength = 0;
+            for (let pointIndex = 1; pointIndex < signalTrace.length; pointIndex += 1) {
+                traceLength += Math.hypot(
+                    (signalTrace[pointIndex].x - signalTrace[pointIndex - 1].x) * width,
+                    (signalTrace[pointIndex].y - signalTrace[pointIndex - 1].y) * height,
+                );
+            }
+            let signalDistance = (time * 0.025 + layerIndex * traceLength * 0.29) % traceLength;
+            let signalX = signalTrace[0].x * width;
+            let signalY = signalTrace[0].y * height;
+            for (let pointIndex = 1; pointIndex < signalTrace.length; pointIndex += 1) {
+                const start = signalTrace[pointIndex - 1];
+                const end = signalTrace[pointIndex];
+                const segmentLength = Math.hypot(
+                    (end.x - start.x) * width,
+                    (end.y - start.y) * height,
+                );
+                if (signalDistance <= segmentLength) {
+                    const progress = segmentLength === 0 ? 0 : signalDistance / segmentLength;
+                    signalX = (start.x + (end.x - start.x) * progress) * width;
+                    signalY = (start.y + (end.y - start.y) * progress) * height;
+                    break;
+                }
+                signalDistance -= segmentLength;
+            }
+            context.fillStyle = '#d9faff';
+            context.beginPath();
+            context.arc(signalX, signalY, 2.4, 0, Math.PI * 2);
+            context.fill();
             context.restore();
-        });
-        const signalX = ((time * 0.06) % (width * 1.1)) - width * 0.55;
-        context.fillStyle = '#d9faff';
-        context.beginPath();
-        context.arc(signalX, 0, 3, 0, Math.PI * 2);
-        context.fill();
+        }
         context.restore();
     }
 
@@ -181,7 +271,11 @@
         };
     }
 
+    let activeController = null;
+
     function initializeAnimations(documentRef, windowRef) {
+        if (activeController) activeController.destroy();
+
         const heroCanvas = documentRef.getElementById('heroAnimation');
         const companionCanvas = documentRef.getElementById('companionAnimation');
         const heroRegion = heroCanvas?.closest('.hero');
@@ -212,7 +306,11 @@
 
         let frameId = 0;
         let documentVisible = !documentRef.hidden;
+        let destroyed = false;
+        let intersectionObserver = null;
+        let resizeObserver = null;
         const drawFrame = time => {
+            if (destroyed) return;
             scenes.forEach(scene => {
                 if (shouldDrawScene(scene, documentVisible)) registry[pack].draw(scene, scene.mode === 'static' ? 0 : time);
             });
@@ -222,7 +320,8 @@
         };
 
         const start = () => {
-            windowRef.cancelAnimationFrame(frameId);
+            if (destroyed) return;
+            if (frameId) windowRef.cancelAnimationFrame(frameId);
             frameId = 0;
             scenes.forEach(scene => {
                 if (shouldDrawScene(scene, documentVisible)) registry[pack].draw(scene, 0);
@@ -232,16 +331,17 @@
             }
         };
 
-        documentRef.addEventListener('visibilitychange', () => {
+        function handleVisibilityChange() {
             documentVisible = !documentRef.hidden;
             if (documentVisible) start();
             else {
-                windowRef.cancelAnimationFrame(frameId);
+                if (frameId) windowRef.cancelAnimationFrame(frameId);
                 frameId = 0;
             }
-        });
+        }
 
         function updateModes() {
+            if (destroyed) return;
             scenes.forEach(scene => {
                 scene.mode = resolveSceneMode({
                     reducedMotion: reducedMotionQuery.matches,
@@ -260,25 +360,31 @@
             hero.pointer.y = event.clientY - bounds.top;
             hero.pointer.active = true;
         };
+        const deactivatePointer = () => {
+            hero.pointer.active = false;
+        };
         heroRegion.addEventListener('pointermove', updatePointer, { passive: true });
-        heroRegion.addEventListener('pointerleave', () => { hero.pointer.active = false; }, { passive: true });
+        heroRegion.addEventListener('pointerleave', deactivatePointer, { passive: true });
+        documentRef.addEventListener('visibilitychange', handleVisibilityChange);
 
         if ('IntersectionObserver' in windowRef) {
-            const observer = new windowRef.IntersectionObserver(entries => {
+            intersectionObserver = new windowRef.IntersectionObserver(entries => {
+                if (destroyed) return;
                 companion.visible = entries.some(entry => entry.isIntersecting);
                 start();
             }, { rootMargin: '120px 0px' });
-            observer.observe(companionCanvas);
+            intersectionObserver.observe(companionCanvas);
         } else {
             companion.visible = true;
         }
 
         const resizeAll = () => {
+            if (destroyed) return;
             scenes.forEach(resizeScene);
             start();
         };
         if ('ResizeObserver' in windowRef) {
-            const resizeObserver = new windowRef.ResizeObserver(resizeAll);
+            resizeObserver = new windowRef.ResizeObserver(resizeAll);
             scenes.forEach(scene => resizeObserver.observe(scene.canvas));
         } else {
             windowRef.addEventListener('resize', resizeAll, { passive: true });
@@ -288,8 +394,27 @@
             query.addEventListener('change', updateModes);
         });
 
+        let controller = null;
+        const destroy = () => {
+            if (destroyed) return;
+            destroyed = true;
+            if (frameId) windowRef.cancelAnimationFrame(frameId);
+            frameId = 0;
+            intersectionObserver?.disconnect();
+            resizeObserver?.disconnect();
+            documentRef.removeEventListener('visibilitychange', handleVisibilityChange);
+            heroRegion.removeEventListener('pointermove', updatePointer);
+            heroRegion.removeEventListener('pointerleave', deactivatePointer);
+            if (!resizeObserver) windowRef.removeEventListener('resize', resizeAll);
+            [reducedMotionQuery, coarsePointerQuery, narrowViewportQuery].forEach(query => {
+                query.removeEventListener('change', updateModes);
+            });
+            if (activeController === controller) activeController = null;
+        };
+        controller = { pack, scenes, start, destroy };
+        activeController = controller;
         start();
-        return { pack, scenes, start };
+        return controller;
     }
 
     return {
