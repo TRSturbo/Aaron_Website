@@ -724,6 +724,19 @@ section {
     text-align: center;
 }
 
+.open-tetris {
+    display: none;
+    width: 44px;
+    min-height: 44px;
+    margin-top: 0.75rem;
+    border: 1px solid var(--accent-secondary);
+    border-radius: 50%;
+    background: var(--bg-secondary);
+    color: var(--accent-primary);
+    cursor: pointer;
+    font-size: 1.1rem;
+}
+
 /* Animations */
 @keyframes fadeInUp {
     from {
@@ -1043,8 +1056,26 @@ kbd {
 
     .tetris-touch-controls {
         display: grid;
+        grid-template-columns: repeat(4, 1fr);
         gap: 0.5rem;
         margin-top: 0.75rem;
+    }
+
+    .tetris-touch-controls button {
+        min-width: 0;
+        padding-inline: 0.25rem;
+        font-size: 0.875rem;
+        white-space: nowrap;
+    }
+
+    .tetris-touch-controls [data-tetris-action="restart"] {
+        grid-column: span 2;
+    }
+
+    .open-tetris {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
     }
 }
 

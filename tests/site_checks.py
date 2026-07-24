@@ -201,6 +201,62 @@ def main():
         "Tetris close button needs an accessible name",
         failures,
     )
+    touch_trigger = next((button for button in parser.buttons if button.get("id") == "openTetris"), None)
+    check(
+        touch_trigger
+        and touch_trigger.get("type") == "button"
+        and touch_trigger.get("aria-label") == "Open secret Tetris game",
+        "Tetris needs an accessible external touch trigger",
+        failures,
+    )
+    footer = re.search(r"(?ms)<footer\b[^>]*>.*?</footer>", (ROOT / "index.html").read_text(encoding="utf-8"))
+    check(
+        footer and 'id="openTetris"' in footer.group(0),
+        "The external Tetris trigger must be discoverable in the footer",
+        failures,
+    )
+    check(
+        "document.getElementById('openTetris').addEventListener('click', showTetris);" in script,
+        "The external Tetris trigger must open the game",
+        failures,
+    )
+    check(
+        ".filter(element => element.getClientRects().length > 0)" in script,
+        "Modal focus trapping must ignore CSS-hidden controls",
+        failures,
+    )
+    restart_button = next(
+        (button for button in parser.buttons if button.get("data-tetris-action") == "restart"),
+        None,
+    )
+    check(
+        restart_button and restart_button.get("aria-label") == "Restart game",
+        "Tetris touch controls need an accessible Restart button",
+        failures,
+    )
+    check(
+        re.search(r"case 'restart':\s*tetrisGame\.restart\(\);", script),
+        "Tetris touch actions must restart after game over",
+        failures,
+    )
+    check(
+        compact_controls and re.search(r"grid-template-columns\s*:\s*repeat\(4,\s*1fr\)\s*;", compact_controls.group(1)),
+        "Compact Tetris controls must use four columns",
+        failures,
+    )
+    check(
+        re.search(r"\.tetris-touch-controls\s+\[data-tetris-action=\"restart\"\]\s*\{[^}]*grid-column\s*:\s*span\s+2\s*;", styles),
+        "Compact Tetris Restart must span two columns in its second control row",
+        failures,
+    )
+    check(
+        re.search(
+            r"this\.pieces\s*=\s*\[\s*\[\s*\[\s*\[1\s*,\s*1\s*,\s*1\s*,\s*1\]\s*\]\s*,\s*\[\s*\[1\]\s*,\s*\[1\]\s*,\s*\[1\]\s*,\s*\[1\]\s*\]\s*\]",
+            script,
+        ),
+        "The I tetromino must define horizontal and vertical rotation states",
+        failures,
+    )
     tetris_canvases = [
         canvas for canvas in parser.canvases if canvas["attributes"].get("id") == "tetrisBoard"
     ]

@@ -318,7 +318,7 @@
                 ];
                 
                 this.pieces = [
-                    [[[1,1,1,1]]], // I
+                    [[[1,1,1,1]],[[1],[1],[1],[1]]], // I
                     [[[1,1],[1,1]]], // O
                     [[[0,1,0],[1,1,1]],[[1,0],[1,1],[1,0]],[[1,1,1],[0,1,0]],[[0,1],[1,1],[0,1]]], // T
                     [[[0,1,1],[1,1,0]],[[1,0],[1,1],[0,1]]], // S
@@ -530,7 +530,7 @@
                 this.ctx.fillText('GAME OVER', this.canvas.width / 2, this.canvas.height / 2);
                 
                 this.ctx.font = '16px Inter';
-                this.ctx.fillText('Press R to Restart', this.canvas.width / 2, this.canvas.height / 2 + 40);
+                this.ctx.fillText('Press R or Restart to play again', this.canvas.width / 2, this.canvas.height / 2 + 40);
             }
             
             restart() {
@@ -556,7 +556,8 @@
         let previousFocus = null;
 
         function runTetrisAction(action) {
-            if (!tetrisGame || !tetrisGame.gameRunning) return;
+            if (!tetrisGame) return;
+            if (!tetrisGame.gameRunning && action !== 'restart') return;
 
             switch (action) {
                 case 'left':
@@ -577,6 +578,9 @@
                 case 'pause':
                     tetrisGame.pause();
                     break;
+                case 'restart':
+                    tetrisGame.restart();
+                    break;
             }
 
             tetrisGame.draw();
@@ -585,7 +589,7 @@
         function trapModalFocus(event, modal) {
             const focusableElements = Array.from(
                 modal.querySelectorAll('button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])')
-            );
+            ).filter(element => element.getClientRects().length > 0);
 
             if (focusableElements.length === 0) return;
 
@@ -705,6 +709,7 @@
 
             document.getElementById('currentYear').textContent = new Date().getFullYear();
             document.getElementById('closeTetris').addEventListener('click', closeTetris);
+            document.getElementById('openTetris').addEventListener('click', showTetris);
             document.querySelectorAll('[data-tetris-action]').forEach(button => {
                 button.addEventListener('click', () => runTetrisAction(button.dataset.tetrisAction));
             });
