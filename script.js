@@ -500,9 +500,8 @@
                     this.lastTime = time;
                 }
                 
-                this.draw();
-                
                 if (this.gameRunning) {
+                    this.draw();
                     requestAnimationFrame(this.update.bind(this));
                 }
             }
@@ -589,7 +588,9 @@
                     return;
             }
 
-            tetrisGame.draw();
+            if (tetrisGame.gameRunning) {
+                tetrisGame.draw();
+            }
         }
 
         function trapModalFocus(event, modal) {

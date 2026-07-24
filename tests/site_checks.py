@@ -258,6 +258,22 @@ def main():
         failures,
     )
     check(
+        re.search(
+            r"(?ms)this\.drop\(\);\s*this\.lastTime\s*=\s*time\s*;\s*}\s*if\s*\(this\.gameRunning\)\s*\{\s*this\.draw\(\);\s*requestAnimationFrame",
+            script,
+        ),
+        "Tetris update must not redraw after a drop ends the game",
+        failures,
+    )
+    check(
+        re.search(
+            r"(?ms)function runTetrisAction\(action\)\s*\{.*?switch\s*\(action\).*?}\s*if\s*\(tetrisGame\.gameRunning\)\s*\{\s*tetrisGame\.draw\(\);\s*}",
+            script,
+        ),
+        "Tetris touch actions must not redraw after an action ends the game",
+        failures,
+    )
+    check(
         compact_controls and re.search(r"grid-template-columns\s*:\s*repeat\(4,\s*1fr\)\s*;", compact_controls.group(1)),
         "Compact Tetris controls must use four columns",
         failures,
