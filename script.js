@@ -8,7 +8,13 @@
                 startDate: "2024-02-01",
                 endDate: null,
                 location: "Remote",
-                description: "Lead software engineering teams across web, mobile, and cloud delivery, setting technical direction while coaching engineers and strengthening delivery practices."
+                summary: "Lead engineering teams delivering customer-facing products and shared platform capabilities across modern web, mobile, and Azure environments. Pair organizational leadership with hands-on architecture and implementation.",
+                highlights: [
+                    "Led delivery and operational standards across a portfolio of 20+ applications, including five new launches in my first year as senior manager.",
+                    "Reduced the security-remediation backlog by roughly 80% and improved critical-item resolution to about two days.",
+                    "Built a self-sustaining feature-intake and mentorship model that increased team autonomy and removed single-person dependencies.",
+                    "Scaled practical AI adoption through a 15-session workshop series, reusable tooling, and rapid delivery of working prototypes."
+                ]
             },
             {
                 company: "Acuity Brands",
@@ -16,7 +22,12 @@
                 startDate: "2021-03-01",
                 endDate: "2024-02-01",
                 location: "",
-                description: "Designed and delivered full-stack features, contributed to architecture decisions, and mentored teammates across modern web and cloud systems."
+                summary: "Combined senior engineering with de facto team leadership, owning planning, architecture, stakeholder alignment, mentoring, and delivery while continuing to build production software.",
+                highlights: [
+                    "Led customer-portal and enterprise-data applications from requirements and refinement through production launch.",
+                    "Built reusable React, Next.js, and Node.js platform capabilities spanning accessibility, internationalization, feature management, and observability.",
+                    "Demonstrated rapid delivery by producing first-pass application frontends in approximately 19 to 35 hours rather than weeks."
+                ]
             },
             {
                 company: "Acuity Brands",
@@ -24,7 +35,11 @@
                 startDate: "2015-05-01",
                 endDate: "2021-03-01",
                 location: "Atlanta Metropolitan Area",
-                description: "Built web and mobile applications, partnered across product, design, and quality engineering, and helped carry work from discovery through production."
+                summary: "Built web and mobile applications, partnered across product and field teams, and grew from individual contributor into a squad lead responsible for customer priorities and delivery.",
+                highlights: [
+                    "Reduced bugs by 94% and crashes by 82% in a mission-critical commissioning application while maintaining full availability for its general-release channel.",
+                    "Continued advising and training the successor team after transferring organizations, preserving product knowledge and delivery continuity."
+                ]
             },
             {
                 company: "Apple",
@@ -32,7 +47,7 @@
                 startDate: "2013-05-01",
                 endDate: "2015-05-01",
                 location: "",
-                description: "Resolved complex technical issues for customers and employees while serving as a senior advisor, mentor, and team resource; ranked within the top 1% of the area."
+                summary: "Resolved complex technical issues for customers and employees while serving as a senior advisor, mentor, and team resource; ranked within the top 1% of the area."
             },
             {
                 company: "University of Georgia",
@@ -40,7 +55,7 @@
                 startDate: "2013-01-01",
                 endDate: "2013-05-01",
                 location: "",
-                description: "Helped protect residents and university property across campus housing; became the first freshman selected for the position without prior experience."
+                summary: "Helped protect residents and university property across campus housing; became the first freshman selected for the position without prior experience."
             },
             {
                 company: "Moe's Southwest Grill",
@@ -48,7 +63,7 @@
                 startDate: "2011-06-01",
                 endDate: "2012-08-01",
                 location: "",
-                description: "Developed an early foundation in teamwork, accountability, and hands-on leadership in a fast-paced service environment."
+                summary: "Developed an early foundation in teamwork, accountability, and hands-on leadership in a fast-paced service environment."
             }
         ];
 
@@ -107,7 +122,12 @@
                 
                 const item = document.createElement('div');
                 item.className = 'timeline-item';
-                item.style.animationDelay = `${index * 0.2}s`;
+                item.dataset.reveal = '';
+                item.style.setProperty('--reveal-delay', `${Math.min(index, 3) * 80}ms`);
+
+                const highlights = exp.highlights?.length
+                    ? `<ul class="job-highlights">${exp.highlights.map(highlight => `<li>${highlight}</li>`).join('')}</ul>`
+                    : '';
                 
                 item.innerHTML = `
                     <article class="timeline-content" aria-label="${exp.title} at ${exp.company}">
@@ -115,7 +135,8 @@
                         <p class="job-title">${exp.title}</p>
                         <p class="job-duration">${duration.fullDuration} • <time datetime="${exp.startDate}">${startYear}</time> - ${duration.endDateLabel}</p>
                         ${exp.location ? `<p class="job-duration">${exp.location}</p>` : ''}
-                        <p class="job-description">${exp.description}</p>
+                        <p class="job-summary">${exp.summary}</p>
+                        ${highlights}
                     </article>
                     <div class="timeline-dot" aria-hidden="true"></div>
                 `;
@@ -142,8 +163,11 @@
                 particle.style.left = Math.random() * 100 + '%';
                 particle.style.width = Math.random() * 3 + 1 + 'px';
                 particle.style.height = particle.style.width;
-                particle.style.animationDuration = (Math.random() * 15 + 10) + 's';
-                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.setProperty('--particle-duration', `${Math.random() * 16 + 14}s`);
+                particle.style.setProperty('--particle-delay', `${Math.random() * -24}s`);
+                particle.style.setProperty('--particle-drift', `${Math.random() * 120 - 60}px`);
+                particle.style.setProperty('--particle-opacity', `${Math.random() * 0.1 + 0.05}`);
+                particle.style.setProperty('--particle-blur', `${Math.random() > 0.75 ? 1 : 0}px`);
                 container.appendChild(particle);
             }
         }
@@ -159,26 +183,31 @@
 
         // Intersection Observer for animations
         function setupAnimations() {
+            const revealElements = Array.from(document.querySelectorAll('[data-reveal]'));
+
             if (reducedMotionQuery.matches || !('IntersectionObserver' in window)) {
+                revealElements.forEach(element => element.classList.add('is-visible'));
                 return;
             }
+
+            document.body.classList.add('reveal-ready');
+
+            document.querySelectorAll('.about-cards, .impact-grid, .contact-grid').forEach(group => {
+                Array.from(group.children).forEach((element, index) => {
+                    element.style.setProperty('--reveal-delay', `${index * 90}ms`);
+                });
+            });
 
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
                     }
                 });
-            }, { threshold: 0.1, rootMargin: '0px 0px -100px 0px' });
+            }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
 
-            // Apply initial styles and observe elements
-            document.querySelectorAll('.about-card, .timeline-item').forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(30px)';
-                el.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
-                observer.observe(el);
-            });
+            revealElements.forEach(element => observer.observe(element));
         }
 
         // Navigation active state on scroll
