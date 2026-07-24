@@ -346,6 +346,7 @@ test('Flow signals travel on the same pointer-reshaped routes in hero and compan
     const baseContext = createRecordingContext();
     const influencedContext = createRecordingContext();
     const companionContext = createRecordingContext();
+    const adjacentContext = createRecordingContext();
     const laterContext = createRecordingContext();
 
     drawFlow(createDrawingScene(baseContext), 1200);
@@ -356,11 +357,13 @@ test('Flow signals travel on the same pointer-reshaped routes in hero and compan
         interactive: false,
         mode: 'ambient',
     }), 1200);
+    drawFlow(createDrawingScene(adjacentContext), 1216);
     drawFlow(createDrawingScene(laterContext), 1600);
 
     const baseSignals = getSignalArcs(baseContext);
     const influencedSignals = getSignalArcs(influencedContext);
     const companionSignals = getSignalArcs(companionContext);
+    const adjacentSignals = getSignalArcs(adjacentContext);
     const laterSignals = getSignalArcs(laterContext);
     assert.ok(baseSignals.length >= 2, 'hero renders multiple traveling signals');
     assert.equal(influencedSignals.length, baseSignals.length);
@@ -372,12 +375,17 @@ test('Flow signals travel on the same pointer-reshaped routes in hero and compan
         influencedSignals.some((signal, index) => Math.abs(signal.y - baseSignals[index].y) > 1),
         'pointer reshaping moves the signal with its route',
     );
+    adjacentSignals.forEach((signal, index) => {
+        const movement = signal.x - baseSignals[index].x;
+        assert.ok(movement > 0 && movement < 8, 'adjacent frames advance smoothly without an 8px jump');
+    });
     assert.ok(
         laterSignals.some((signal, index) => signal.x !== baseSignals[index].x),
         'signal progress advances over time',
     );
     assert.ok(signalsFollowRenderedFlowRoutes(influencedContext, influencedSignals));
     assert.ok(signalsFollowRenderedFlowRoutes(companionContext, companionSignals));
+    assert.ok(signalsFollowRenderedFlowRoutes(adjacentContext, adjacentSignals));
 });
 
 test('Blueprint draws explicit routed traces with signals fixed to those traces', () => {

@@ -118,30 +118,54 @@
         return y;
     }
 
+    function getFlowSignalLine(flowLines, primaryLine, signal) {
+        return Math.max(0, Math.min(
+            flowLines - 1,
+            primaryLine + FLOW_SIGNAL_OFFSETS[signal],
+        ));
+    }
+
+    function getFlowSignalX(width, time, signal) {
+        const routeSpan = width + 20;
+        return -10 + (time * 0.08 + signal * 104) % routeSpan;
+    }
+
     function drawFlow(scene, time) {
         const { context, width, height } = scene;
         const { flowLines } = getSceneComplexity(scene);
         const primaryLine = flowLines === 9 ? 4 : Math.floor(flowLines / 2);
+        const signalCount = scene.interactive ? FLOW_SIGNAL_OFFSETS.length : 2;
+        const routeEnd = width + 10;
         context.clearRect(0, 0, width, height);
         for (let line = 0; line < flowLines; line += 1) {
             context.beginPath();
-            for (let x = -10; x <= width + 10; x += 8) {
-                const y = getFlowY(scene, line, x, time);
-                x === -10 ? context.moveTo(x, y) : context.lineTo(x, y);
+            context.moveTo(-10, getFlowY(scene, line, -10, time));
+            let signalX = Number.NaN;
+            for (let signal = 0; signal < signalCount; signal += 1) {
+                if (getFlowSignalLine(flowLines, primaryLine, signal) === line) {
+                    signalX = getFlowSignalX(width, time, signal);
+                    break;
+                }
             }
+            let previousX = -10;
+            for (let x = -2; x < routeEnd; x += 8) {
+                if (signalX > previousX && signalX < x) {
+                    context.lineTo(signalX, getFlowY(scene, line, signalX, time));
+                }
+                context.lineTo(x, getFlowY(scene, line, x, time));
+                previousX = x;
+            }
+            if (signalX > previousX && signalX < routeEnd) {
+                context.lineTo(signalX, getFlowY(scene, line, signalX, time));
+            }
+            context.lineTo(routeEnd, getFlowY(scene, line, routeEnd, time));
             context.strokeStyle = `rgba(48, 203, 255, ${line === primaryLine ? 0.34 : 0.17})`;
             context.lineWidth = line === primaryLine ? 1.5 : 0.75;
             context.stroke();
         }
-        const routePointCount = Math.floor((width + 20) / 8) + 1;
-        const signalCount = scene.interactive ? FLOW_SIGNAL_OFFSETS.length : 2;
         for (let signal = 0; signal < signalCount; signal += 1) {
-            const line = Math.max(0, Math.min(
-                flowLines - 1,
-                primaryLine + FLOW_SIGNAL_OFFSETS[signal],
-            ));
-            const routePoint = (Math.floor(time * 0.01) + signal * 13) % routePointCount;
-            const x = -10 + routePoint * 8;
+            const line = getFlowSignalLine(flowLines, primaryLine, signal);
+            const x = getFlowSignalX(width, time, signal);
             const y = getFlowY(scene, line, x, time);
             context.fillStyle = signal === 1 ? '#d9faff' : 'rgba(108, 225, 255, 0.78)';
             context.beginPath();
