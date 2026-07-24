@@ -1,0 +1,142 @@
+"""Dependency-free structural checks for the static portfolio site."""
+
+from html.parser import HTMLParser
+import json
+from pathlib import Path
+from urllib.parse import urlparse
+import xml.etree.ElementTree as ET
+
+
+ROOT = Path(__file__).resolve().parents[1]
+
+
+class SiteParser(HTMLParser):
+    def __init__(self):
+        super().__init__()
+        self.ids = []
+        self.hrefs = []
+        self.asset_paths = []
+        self.meta = {}
+        self.scripts = []
+        self.dialogs = []
+        self.buttons = []
+        self._json_ld = False
+        self.json_ld_text = []
+
+    def handle_starttag(self, tag, attrs):
+        values = dict(attrs)
+
+        if values.get("id"):
+            self.ids.append(values["id"])
+
+        if tag == "a" and values.get("href"):
+            self.hrefs.append(values["href"])
+
+        if tag in {"img", "script", "link"}:
+            source = values.get("src") or values.get("href")
+            if source:
+                self.asset_paths.append(source)
+
+        if tag == "img" and values.get("srcset"):
+            self.asset_paths.extend(
+                candidate.strip().split()[0]
+                for candidate in values["srcset"].split(",")
+            )
+
+        if tag == "meta":
+            key = values.get("name") or values.get("property")
+            if key:
+                self.meta[key] = values.get("content", "")
+
+        if tag == "script":
+            self.scripts.append(values)
+            self._json_ld = values.get("type") == "application/ld+json"
+
+        if tag == "div" and values.get("role") == "dialog":
+            self.dialogs.append(values)
+
+        if tag == "button":
+            self.buttons.append(values)
+
+    def handle_endtag(self, tag):
+        if tag == "script":
+            self._json_ld = False
+
+    def handle_data(self, data):
+        if self._json_ld:
+            self.json_ld_text.append(data)
+
+
+def local_asset_path(asset):
+    parsed = urlparse(asset)
+    if parsed.scheme or parsed.netloc or asset.startswith(("#", "mailto:")):
+        return None
+    return ROOT / parsed.path.lstrip("/")
+
+
+def check(condition, message, failures):
+    if not condition:
+        failures.append(message)
+
+
+def main():
+    failures = []
+    parser = SiteParser()
+    parser.feed((ROOT / "index.html").read_text(encoding="utf-8"))
+
+    check(len(parser.ids) == len(set(parser.ids)), "HTML contains duplicate IDs", failures)
+
+    for href in parser.hrefs:
+        if href.startswith("#"):
+            check(href[1:] in parser.ids, f"Missing anchor target: {href}", failures)
+
+    for asset in parser.asset_paths:
+        path = local_asset_path(asset)
+        if path:
+            check(path.exists(), f"Missing local asset: {asset}", failures)
+
+    for required_meta in ("description", "viewport", "og:title", "og:description", "og:url"):
+        check(bool(parser.meta.get(required_meta)), f"Missing metadata: {required_meta}", failures)
+
+    viewport = parser.meta.get("viewport", "").lower()
+    check("user-scalable=no" not in viewport, "Viewport disables browser zoom", failures)
+
+    local_scripts = [script for script in parser.scripts if script.get("src") == "script.js"]
+    check(len(local_scripts) == 1 and "defer" in local_scripts[0], "script.js must load once with defer", failures)
+
+    check(
+        len(parser.dialogs) == 1 and parser.dialogs[0].get("aria-modal") == "true",
+        "Tetris must be exposed as one modal dialog",
+        failures,
+    )
+    check(
+        any(button.get("id") == "closeTetris" and button.get("aria-label") for button in parser.buttons),
+        "Tetris close button needs an accessible name",
+        failures,
+    )
+
+    try:
+        json.loads("".join(parser.json_ld_text))
+    except json.JSONDecodeError as error:
+        failures.append(f"Invalid JSON-LD: {error}")
+
+    try:
+        json.loads((ROOT / "manifest.json").read_text(encoding="utf-8"))
+    except json.JSONDecodeError as error:
+        failures.append(f"Invalid manifest.json: {error}")
+
+    try:
+        ET.parse(ROOT / "sitemap.xml")
+    except ET.ParseError as error:
+        failures.append(f"Invalid sitemap.xml: {error}")
+
+    if failures:
+        for failure in failures:
+            print(f"FAIL: {failure}")
+        raise SystemExit(1)
+
+    print("All site checks passed.")
+
+
+if __name__ == "__main__":
+    main()

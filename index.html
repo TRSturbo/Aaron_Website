@@ -3,13 +3,26 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Aaron Tharpe is an engineering manager and full-stack developer focused on building strong teams, reliable software, and thoughtful technical strategy.">
+    <meta name="theme-color" content="#0a0a0a">
+    <meta name="color-scheme" content="dark">
+    <link rel="canonical" href="https://aaron.tharpefamily.com/">
+
+    <meta property="og:type" content="website">
+    <meta property="og:title" content="Aaron Tharpe - Engineering Manager & Developer">
+    <meta property="og:description" content="Engineering leadership, full-stack development, and a career built around helping teams deliver excellent software.">
+    <meta property="og:url" content="https://aaron.tharpefamily.com/">
+    <meta property="og:image" content="https://aaron.tharpefamily.com/aaron-800.webp">
+    <meta property="og:image:alt" content="Portrait of Aaron Tharpe">
+    <meta name="twitter:card" content="summary">
+
     <title>Aaron Tharpe - Engineering Manager & Developer</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" href="styles.css">
-    <script src="script.js"></script>
+    <script src="script.js" defer></script>
 
     <!--Favicon-->
     <link rel="apple-touch-icon" sizes="57x57" href="/apple-icon-57x57.png">
@@ -26,50 +39,69 @@
     <link rel="icon" type="image/png" sizes="96x96" href="/favicon-96x96.png">
     <link rel="icon" type="image/png" sizes="16x16" href="/favicon-16x16.png">
     <link rel="manifest" href="/manifest.json">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black">
     <meta name="msapplication-TileImage" content="/ms-icon-144x144.png">
-    <meta name="theme-color" content="#04A1FF" media="(prefers-color-scheme: dark)">
-
-</head>
-<style>
-    body { 
-        background-color: #121212; 
-        margin: 0; 
-        padding: 0; 
-        overflow-x: hidden; 
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "Person",
+        "name": "Aaron Tharpe",
+        "url": "https://aaron.tharpefamily.com/",
+        "image": "https://aaron.tharpefamily.com/aaron-800.webp",
+        "jobTitle": "Senior Manager Software Engineering",
+        "sameAs": [
+            "https://www.linkedin.com/in/aaron-tharpe-3a501490/",
+            "https://github.com/trsturbo"
+        ],
+        "knowsAbout": ["Engineering Leadership", "React", "Node.js", "Angular", "React Native", "Azure", "Google Cloud"]
     }
-</style>
+    </script>
+</head>
 <body>
-    <div class="bg-animation" id="bgAnimation"></div>
-    <div class="scroll-indicator" id="scrollIndicator"></div>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+    <div class="bg-animation" id="bgAnimation" aria-hidden="true"></div>
+    <div class="scroll-indicator" id="scrollIndicator" aria-hidden="true"></div>
     
-    <nav>
+    <nav aria-label="Primary navigation">
         <ul>
-            <li><a href="#hero" class="nav-link active">Home</a></li>
+            <li><a href="#hero" class="nav-link active" aria-current="location">Home</a></li>
             <li><a href="#about" class="nav-link">About</a></li>
             <li><a href="#experience" class="nav-link">Experience</a></li>
             <li><a href="#contact" class="nav-link">Contact</a></li>
         </ul>
     </nav>
 
+    <main id="main-content">
     <section class="hero" id="hero">
         <div class="hero-content">
             <div class="hero-avatar">
-                <img src="aaron.jpg" alt="Aaron Tharpe" id="heroImage" onerror="this.style.display='none'">
+                <img
+                    src="aaron-400.webp"
+                    srcset="aaron-400.webp 400w, aaron-800.webp 800w"
+                    sizes="(max-width: 768px) 150px, 200px"
+                    width="400"
+                    height="365"
+                    alt="Aaron Tharpe"
+                    id="heroImage"
+                    fetchpriority="high"
+                    decoding="async"
+                >
             </div>
             <h1>Aaron Tharpe</h1>
             <p class="subtitle">Engineering Manager • Passionate Developer • Collaborative Leader</p>
-            <a href="#about" class="cta-button">
-                <span>Discover My Journey</span>
-                <i class="fas fa-arrow-down"></i>
-            </a>
+            <div class="hero-actions">
+                <a href="#experience" class="cta-button">
+                    <span>View Experience</span>
+                    <i class="fas fa-arrow-down" aria-hidden="true"></i>
+                </a>
+                <a href="#contact" class="cta-button cta-button-secondary">Contact Me</a>
+            </div>
         </div>
     </section>
 
     <div class="circuit-divider">
-        <svg class="circuit-svg" viewBox="0 0 1200 200" xmlns="http://www.w3.org/2000/svg">
+        <svg class="circuit-svg" viewBox="0 0 1200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
             <defs>
                 <linearGradient id="circuitGradient" x1="0%" y1="0%" x2="100%" y2="0%">
                     <stop offset="0%" style="stop-color:var(--accent-primary);stop-opacity:0.3"/>
@@ -110,31 +142,37 @@
         </div>
         <div class="about-cards">
             <div class="about-card">
-                <i class="fas fa-users card-icon"></i>
+                <i class="fas fa-users card-icon" aria-hidden="true"></i>
                 <h3 class="card-title">Leadership Excellence</h3>
-                <p class="card-text">
-                    As an <strong>Engineering Manager and Developer</strong>, I lead <strong>scalable and efficient teams</strong> to deliver <strong>high-quality solutions</strong>. I thrive in all aspects of management, including <strong>hiring, mentoring, performance management, and shaping technical roadmaps</strong>, while fostering a <strong>collaborative team culture</strong>. Pairing strong foundational expertise with real-world <strong>emotional intelligence</strong>, I effectively understand and address team dynamics and individual challenges.
-                </p>
+                <ul class="card-points">
+                    <li>Hire, mentor, and grow engineers through candid, thoughtful leadership.</li>
+                    <li>Shape technical roadmaps and turn ambiguous problems into clear plans.</li>
+                    <li>Build collaborative teams that consistently deliver reliable software.</li>
+                </ul>
             </div>
             <div class="about-card">
-                <i class="fas fa-code card-icon"></i>
+                <i class="fas fa-code card-icon" aria-hidden="true"></i>
                 <h3 class="card-title">Technical Expertise</h3>
-                <p class="card-text">
-                    I possess a strong full-stack foundation, specializing in <strong>React</strong>, <strong>Node.js</strong>, <strong>Angular</strong>, and both <strong>native and React Native mobile development</strong>. My proficiency spans <strong>Azure</strong>, <strong>Google Cloud</strong>, <strong>CosmosDB</strong>, and <strong>SQL</strong>. I excel in full-scale application development, establishing best practices for <strong>test automation</strong>, <strong>code quality</strong>, and <strong>security</strong>, and driving projects from discovery to production through seamless cross-functional collaboration.
-                </p>
+                <ul class="card-points">
+                    <li>Full-stack development with React, Node.js, Angular, and React Native.</li>
+                    <li>Cloud and data experience across Azure, Google Cloud, Cosmos DB, and SQL.</li>
+                    <li>Practical standards for automated testing, security, and maintainable delivery.</li>
+                </ul>
             </div>
             <div class="about-card">
-                <i class="fas fa-heart card-icon"></i>
+                <i class="fas fa-heart card-icon" aria-hidden="true"></i>
                 <h3 class="card-title">Personal Passion</h3>
-                <p class="card-text">
-                    Beyond my professional roles, I am passionate about <strong>continuous learning</strong>, particularly in <strong>smart home automation</strong> (YAML, VMs, networking). My dedication extends to <strong>mentorship</strong>, helping individuals reach their full potential. As a father, I've honed patience and calm problem-solving. I also maintain a keen interest in <strong>electric vehicle technology</strong>, reflecting my broader curiosity for innovation.
-                </p>
+                <ul class="card-points">
+                    <li>Continuous learning through smart-home automation, networking, and virtual machines.</li>
+                    <li>Mentorship that helps people build confidence and reach their potential.</li>
+                    <li>A lasting curiosity for electric vehicles and useful, human-centered technology.</li>
+                </ul>
             </div>
         </div>
     </section>
 
     <div class="circuit-divider">
-        <svg class="circuit-svg" viewBox="0 0 1200 200" xmlns="http://www.w3.org/2000/svg">            
+        <svg class="circuit-svg" viewBox="0 0 1200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
             <!-- Reverse pattern for variety -->
             <path class="circuit-path" d="M1200,100 Q1000,150 800,100 T400,100 Q200,50 0,100" />
             <path class="circuit-path" d="M1200,80 L900,80 Q800,120 700,80 L400,80 Q300,40 0,80" style="animation-delay: -1s"/>
@@ -170,7 +208,7 @@
     </section>
 
     <div class="circuit-divider">
-        <svg class="circuit-svg" viewBox="0 0 1200 200" xmlns="http://www.w3.org/2000/svg">
+        <svg class="circuit-svg" viewBox="0 0 1200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
             <!-- Complex branching pattern -->
             <path class="circuit-path" d="M0,100 L200,100 Q250,50 300,100 L500,100 Q600,150 700,100 L900,100 Q1000,50 1200,100" />
             <path class="circuit-path" d="M300,100 L300,50 Q400,30 500,50 L500,100" style="animation-delay: -2.5s"/>
@@ -203,37 +241,52 @@
         </div>
         <div class="contact-grid">
             <a href="https://www.linkedin.com/in/aaron-tharpe-3a501490/" class="social-card" target="_blank" rel="noopener noreferrer">
-                <i class="fab fa-linkedin social-icon"></i>
+                <i class="fab fa-linkedin social-icon" aria-hidden="true"></i>
                 <div class="social-name">LinkedIn</div>
                 <div class="social-handle">Connect professionally</div>
             </a>
             <a href="https://github.com/trsturbo" class="social-card" target="_blank" rel="noopener noreferrer">
-                <i class="fab fa-github social-icon"></i>
+                <i class="fab fa-github social-icon" aria-hidden="true"></i>
                 <div class="social-name">GitHub</div>
                 <div class="social-handle">View my code</div>
             </a>
             <a href="mailto:aaron@tharpefamily.com" class="social-card">
-                <i class="fas fa-envelope social-icon"></i>
+                <i class="fas fa-envelope social-icon" aria-hidden="true"></i>
                 <div class="social-name">Email</div>
                 <div class="social-handle">aaron@tharpefamily.com</div>
             </a>
         </div>
     </section>
+    </main>
 
-        <!-- Tetris Modal -->
-    <div class="tetris-modal" id="tetrisModal">
-        <div class="tetris-container">
-            <button class="close-tetris" onclick="closeTetris()">&times;</button>
+    <footer class="site-footer">
+        <p>Built with curiosity and care. <span aria-hidden="true">•</span> © <span id="currentYear">2026</span> Aaron Tharpe</p>
+    </footer>
+
+    <!-- Tetris Modal -->
+    <div
+        class="tetris-modal"
+        id="tetrisModal"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="tetrisTitle"
+        aria-describedby="tetrisDescription"
+        hidden
+    >
+        <div class="tetris-container" role="document">
+            <button class="close-tetris" id="closeTetris" type="button" aria-label="Close Tetris">&times;</button>
             <div class="tetris-header">
-                <h2 class="tetris-title">🎮 TETRIS</h2>
-                <p class="tetris-subtitle">Konami Code Activated! You found the secret game!</p>
+                <h2 class="tetris-title" id="tetrisTitle">🎮 TETRIS</h2>
+                <p class="tetris-subtitle" id="tetrisDescription">Konami Code activated—you found the secret game.</p>
             </div>
             <div class="tetris-game">
-                <canvas class="tetris-board" id="tetrisBoard" width="300" height="600"></canvas>
+                <canvas class="tetris-board" id="tetrisBoard" width="300" height="600" aria-label="Tetris game board">
+                    Your browser does not support the Tetris game canvas.
+                </canvas>
                 <div class="tetris-info">
                     <div class="info-panel">
                         <div class="info-title">Score</div>
-                        <div class="score-value" id="scoreValue">0</div>
+                        <div class="score-value" id="scoreValue" aria-live="polite">0</div>
                     </div>
                     <div class="info-panel">
                         <div class="info-title">Level</div>
@@ -246,17 +299,24 @@
                     <div class="info-panel">
                         <div class="info-title">Controls</div>
                         <div class="tetris-controls">
-                            ← → Move<br>
-                            ↓ Soft Drop<br>
-                            ↑ Rotate<br>
-                            Space Hard Drop<br>
-                            P Pause
+                            <kbd>←</kbd> <kbd>→</kbd> Move<br>
+                            <kbd>↓</kbd> Soft drop<br>
+                            <kbd>↑</kbd> Rotate<br>
+                            <kbd>Space</kbd> Hard drop<br>
+                            <kbd>P</kbd> Pause
                         </div>
                     </div>
                 </div>
+            </div>
+            <div class="tetris-touch-controls" aria-label="Touch game controls">
+                <button type="button" data-tetris-action="left" aria-label="Move left">←</button>
+                <button type="button" data-tetris-action="rotate" aria-label="Rotate piece">↻</button>
+                <button type="button" data-tetris-action="right" aria-label="Move right">→</button>
+                <button type="button" data-tetris-action="down" aria-label="Soft drop">↓</button>
+                <button type="button" data-tetris-action="drop" aria-label="Hard drop">Drop</button>
+                <button type="button" data-tetris-action="pause" aria-label="Pause or resume">Pause</button>
             </div>
         </div>
     </div>
 </body>
 </html>
-    
