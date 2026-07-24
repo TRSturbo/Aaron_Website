@@ -5,6 +5,8 @@ const {
     selectAnimationPack,
     resolveSceneMode,
     createPackRegistry,
+    getSceneComplexity,
+    shouldDrawScene,
 } = require('../animations.js');
 
 test('pack registry exposes the three approved identifiers', () => {
@@ -43,4 +45,20 @@ test('renderer registry supplies every selected pack', () => {
     const registry = createPackRegistry();
     assert.deepEqual(Object.keys(registry), PACK_IDS);
     PACK_IDS.forEach(id => assert.equal(typeof registry[id].draw, 'function'));
+});
+
+test('ambient rendering reduces complexity and responds to mode changes', () => {
+    const interactive = getSceneComplexity({ mode: 'interactive' });
+    const ambient = getSceneComplexity({ mode: 'ambient' });
+
+    assert.ok(ambient.flowLines < interactive.flowLines);
+    assert.ok(ambient.topologyNodes < interactive.topologyNodes);
+    assert.ok(ambient.blueprintLayers < interactive.blueprintLayers);
+    assert.ok(getSceneComplexity({ mode: 'interactive' }).topologyNodes > getSceneComplexity({ mode: 'ambient' }).topologyNodes);
+});
+
+test('only the hero or a visible companion is drawn', () => {
+    assert.equal(shouldDrawScene({ interactive: true, visible: false }), true);
+    assert.equal(shouldDrawScene({ interactive: false, visible: false }), false);
+    assert.equal(shouldDrawScene({ interactive: false, visible: true }), true);
 });

@@ -69,14 +69,28 @@
         scene.context.setTransform(scene.pixelRatio, 0, 0, scene.pixelRatio, 0, 0);
     }
 
+    function getSceneComplexity({ interactive = true, mode }) {
+        if (!interactive || mode === 'interactive') {
+            return { flowLines: 9, topologyNodes: 24, blueprintLayers: 3 };
+        }
+        return { flowLines: 4, topologyNodes: 12, blueprintLayers: 1 };
+    }
+
+    function shouldDrawScene(scene) {
+        return scene.interactive || scene.visible;
+    }
+
     function drawFlow(scene, time) {
         const { context, width, height, pointer, mode } = scene;
+        const { flowLines } = getSceneComplexity(scene);
+        const primaryLine = flowLines === 9 ? 4 : Math.floor(flowLines / 2);
         context.clearRect(0, 0, width, height);
         const interactive = mode === 'interactive' && pointer.active;
-        for (let line = 0; line < 9; line += 1) {
+        for (let line = 0; line < flowLines; line += 1) {
             context.beginPath();
             for (let x = -10; x <= width + 10; x += 8) {
-                const base = height * (0.2 + line * 0.078);
+                const linePosition = flowLines === 1 ? 4 : line * 8 / (flowLines - 1);
+                const base = height * (0.2 + linePosition * 0.078);
                 let y = base + Math.sin(x * 0.016 + time * 0.00032 + line * 0.72) * 10;
                 y += Math.sin(x * 0.006 - time * 0.00017 + line) * 7;
                 if (interactive) {
@@ -85,16 +99,17 @@
                 }
                 x === -10 ? context.moveTo(x, y) : context.lineTo(x, y);
             }
-            context.strokeStyle = `rgba(48, 203, 255, ${line === 4 ? 0.34 : 0.17})`;
-            context.lineWidth = line === 4 ? 1.5 : 0.75;
+            context.strokeStyle = `rgba(48, 203, 255, ${line === primaryLine ? 0.34 : 0.17})`;
+            context.lineWidth = line === primaryLine ? 1.5 : 0.75;
             context.stroke();
         }
     }
 
     function drawTopology(scene, time) {
         const { context, width, height, pointer, mode } = scene;
+        const { topologyNodes } = getSceneComplexity(scene);
         context.clearRect(0, 0, width, height);
-        const points = scene.nodes.map(node => {
+        const points = scene.nodes.slice(0, topologyNodes).map(node => {
             let x = node.x * width + Math.sin(time * 0.00022 + node.phase) * 9;
             let y = node.y * height + Math.cos(time * 0.00018 + node.phase) * 7;
             let heat = 0;
@@ -125,12 +140,13 @@
 
     function drawBlueprint(scene, time) {
         const { context, width, height, pointer, mode } = scene;
+        const { blueprintLayers } = getSceneComplexity(scene);
         context.clearRect(0, 0, width, height);
         const offsetX = mode === 'interactive' && pointer.active ? (pointer.x / width - 0.5) * 18 : 0;
         const offsetY = mode === 'interactive' && pointer.active ? (pointer.y / height - 0.5) * 12 : 0;
         context.save();
         context.translate(width / 2 + offsetX, height * 0.55 + offsetY);
-        [-42, 0, 42].forEach((depth, layer) => {
+        [-42, 0, 42].slice((3 - blueprintLayers) / 2, (3 + blueprintLayers) / 2).forEach((depth, layer) => {
             context.save();
             context.translate(depth * 0.35, depth * -0.22);
             context.rotate((-8 + layer * 4) * Math.PI / 180);
@@ -198,7 +214,7 @@
         let documentVisible = !documentRef.hidden;
         const drawFrame = time => {
             scenes.forEach(scene => {
-                if (scene.visible || scene.interactive) registry[pack].draw(scene, scene.mode === 'static' ? 0 : time);
+                if (shouldDrawScene(scene)) registry[pack].draw(scene, scene.mode === 'static' ? 0 : time);
             });
             if (documentVisible && scenes.some(scene => scene.mode !== 'static')) {
                 frameId = windowRef.requestAnimationFrame(drawFrame);
@@ -208,7 +224,9 @@
         const start = () => {
             windowRef.cancelAnimationFrame(frameId);
             frameId = 0;
-            scenes.forEach(scene => registry[pack].draw(scene, 0));
+            scenes.forEach(scene => {
+                if (shouldDrawScene(scene)) registry[pack].draw(scene, 0);
+            });
             if (documentVisible && scenes.some(scene => scene.mode !== 'static')) {
                 frameId = windowRef.requestAnimationFrame(drawFrame);
             }
@@ -279,6 +297,8 @@
         selectAnimationPack,
         resolveSceneMode,
         createPackRegistry,
+        getSceneComplexity,
+        shouldDrawScene,
         initializeAnimations,
     };
 });
