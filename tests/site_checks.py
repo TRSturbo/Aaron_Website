@@ -21,6 +21,8 @@ class SiteParser(HTMLParser):
         self.scripts = []
         self.dialogs = []
         self.buttons = []
+        self.canvases = []
+        self._current_canvas = None
         self._json_ld = False
         self.json_ld_text = []
 
@@ -59,13 +61,23 @@ class SiteParser(HTMLParser):
         if tag == "button":
             self.buttons.append(values)
 
+        if tag == "canvas":
+            self._current_canvas = {"attributes": values, "fallback_text": []}
+            self.canvases.append(self._current_canvas)
+
     def handle_endtag(self, tag):
         if tag == "script":
             self._json_ld = False
 
+        if tag == "canvas":
+            self._current_canvas = None
+
     def handle_data(self, data):
         if self._json_ld:
             self.json_ld_text.append(data)
+
+        if self._current_canvas is not None:
+            self._current_canvas["fallback_text"].append(data)
 
 
 def local_asset_path(asset):
@@ -130,6 +142,17 @@ def main():
         "Tetris close button needs an accessible name",
         failures,
     )
+    tetris_canvases = [
+        canvas for canvas in parser.canvases if canvas["attributes"].get("id") == "tetrisBoard"
+    ]
+    check(len(tetris_canvases) == 1, "Tetris must include one game board canvas", failures)
+    if len(tetris_canvases) == 1:
+        tetris_canvas = tetris_canvases[0]
+        attributes = tetris_canvas["attributes"]
+        fallback_text = "".join(tetris_canvas["fallback_text"])
+        check(attributes.get("role") == "img", "Tetris board canvas must have image semantics", failures)
+        check(bool(attributes.get("aria-label", "").strip()), "Tetris board canvas needs an accessible name", failures)
+        check("does not support" not in fallback_text.lower(), "Tetris board fallback must not claim canvas is unsupported", failures)
 
     try:
         json.loads("".join(parser.json_ld_text))
