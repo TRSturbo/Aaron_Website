@@ -23,4 +23,9 @@ jobs:
         run: python -m unittest discover -s tests -p "test_*.py"
 
       - name: Check JavaScript syntax
-        run: node --check script.js
+        run: |
+          node --check script.js
+          node --check animations.js
+
+      - name: Run animation regression tests
+        run: node --test tests/test_animations.js
