@@ -138,6 +138,31 @@ def main():
         failures,
     )
     check(
+        re.search(
+            r"(?ms)^\.tetris-container\s*\{[^}]*overflow-x\s*:\s*hidden\s*;[^}]*overflow-y\s*:\s*auto\s*;",
+            styles,
+        ),
+        "Tetris container must prevent horizontal overflow while retaining vertical scrolling",
+        failures,
+    )
+    compact_tetris = re.search(
+        r"(?ms)@media\s*\(max-width:\s*768px\),\s*\(pointer:\s*coarse\)\s*\{(.*?)^\}",
+        styles,
+    )
+    check(bool(compact_tetris), "Tetris needs a compact narrow/coarse-pointer layout", failures)
+    if compact_tetris:
+        compact_styles = compact_tetris.group(1)
+        check(
+            re.search(r"\.tetris-board\s*\{[^}]*height\s*:\s*min\(42svh,\s*360px\)", compact_styles),
+            "Compact Tetris board must use the viewport-relative height cap",
+            failures,
+        )
+        check(
+            re.search(r"\.info-panel:last-child\s*\{[^}]*display\s*:\s*none\s*;", compact_styles),
+            "Compact Tetris layout must hide the keyboard-controls panel",
+            failures,
+        )
+    check(
         any(button.get("id") == "closeTetris" and button.get("aria-label") for button in parser.buttons),
         "Tetris close button needs an accessible name",
         failures,
