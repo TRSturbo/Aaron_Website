@@ -181,6 +181,27 @@
             document.getElementById('scrollIndicator').style.transform = `scaleX(${scrollPercent})`;
         }
 
+        function setupAnchorScrolling() {
+            document.querySelectorAll('.nav-link, .cta-button').forEach(link => {
+                link.addEventListener('click', event => {
+                    const url = new URL(link.href, window.location.href);
+                    const isSamePage = url.origin === window.location.origin
+                        && url.pathname === window.location.pathname
+                        && url.search === window.location.search;
+                    const target = url.hash && document.getElementById(decodeURIComponent(url.hash.slice(1)));
+
+                    if (!isSamePage || !target) return;
+
+                    event.preventDefault();
+                    target.scrollIntoView({
+                        behavior: reducedMotionQuery.matches ? 'auto' : 'smooth',
+                        block: 'start'
+                    });
+                    history.pushState(null, '', url.hash);
+                });
+            });
+        }
+
         // Intersection Observer for animations
         function setupAnimations() {
             const revealElements = Array.from(document.querySelectorAll('[data-reveal]'));
@@ -677,6 +698,7 @@
             createParticles();
             renderTimeline();
             setupAnimations();
+            setupAnchorScrolling();
             setupNavigation();
 
             document.addEventListener('keydown', handleKonamiCode);

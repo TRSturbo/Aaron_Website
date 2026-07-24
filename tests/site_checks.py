@@ -3,6 +3,7 @@
 from html.parser import HTMLParser
 import json
 from pathlib import Path
+import re
 from urllib.parse import urlparse
 import xml.etree.ElementTree as ET
 
@@ -83,6 +84,21 @@ def main():
     failures = []
     parser = SiteParser()
     parser.feed((ROOT / "index.html").read_text(encoding="utf-8"))
+    styles = (ROOT / "styles.css").read_text(encoding="utf-8")
+    script = (ROOT / "script.js").read_text(encoding="utf-8")
+
+    check(
+        not re.search(r"(?ms)^html\s*\{[^}]*scroll-behavior\s*:\s*smooth", styles),
+        "Global smooth scrolling delays or blocks wheel input",
+        failures,
+    )
+    check(
+        "function setupAnchorScrolling()" in script
+        and "setupAnchorScrolling();" in script
+        and "scrollIntoView" in script,
+        "Intentional in-page links must retain scoped smooth scrolling",
+        failures,
+    )
 
     check(len(parser.ids) == len(set(parser.ids)), "HTML contains duplicate IDs", failures)
 
