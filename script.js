@@ -1,3 +1,5 @@
+        const reducedMotionQuery = window.matchMedia('(prefers-reduced-motion: reduce)');
+
         // Experience data
         const experiences = [
             {
@@ -6,7 +8,13 @@
                 startDate: "2024-02-01",
                 endDate: null,
                 location: "Remote",
-                description: "Leading software engineering team, driving technical strategy and team development."
+                summary: "Lead engineering teams delivering customer-facing products and shared platform capabilities across modern web, mobile, and Azure environments. Pair organizational leadership with hands-on architecture and implementation.",
+                highlights: [
+                    "Led delivery and operational standards across a portfolio of 20+ applications, including five new launches in my first year as senior manager.",
+                    "Reduced the security-remediation backlog by roughly 80% and improved critical-item resolution to about two days.",
+                    "Built a self-sustaining feature-intake and mentorship model that increased team autonomy and removed single-person dependencies.",
+                    "Scaled practical AI adoption through a 15-session workshop series, reusable tooling, and rapid delivery of working prototypes."
+                ]
             },
             {
                 company: "Acuity Brands",
@@ -14,7 +22,12 @@
                 startDate: "2021-03-01",
                 endDate: "2024-02-01",
                 location: "",
-                description: "Developed and maintained complex software solutions, contributed to technical architecture and team growth."
+                summary: "Combined senior engineering with de facto team leadership, owning planning, architecture, stakeholder alignment, mentoring, and delivery while continuing to build production software.",
+                highlights: [
+                    "Led customer-portal and enterprise-data applications from requirements and refinement through production launch.",
+                    "Built reusable React, Next.js, and Node.js platform capabilities spanning accessibility, internationalization, feature management, and observability.",
+                    "Demonstrated rapid delivery by producing first-pass application frontends in approximately 19 to 35 hours rather than weeks."
+                ]
             },
             {
                 company: "Acuity Brands",
@@ -22,7 +35,11 @@
                 startDate: "2015-05-01",
                 endDate: "2021-03-01",
                 location: "Atlanta Metropolitan Area",
-                description: "Designed and implemented web and mobile applications, collaborated on cross-functional projects."
+                summary: "Built web and mobile applications, partnered across product and field teams, and grew from individual contributor into a squad lead responsible for customer priorities and delivery.",
+                highlights: [
+                    "Reduced bugs by 94% and crashes by 82% in a mission-critical commissioning application while maintaining full availability for its general-release channel.",
+                    "Continued advising and training the successor team after transferring organizations, preserving product knowledge and delivery continuity."
+                ]
             },
             {
                 company: "Apple",
@@ -30,7 +47,7 @@
                 startDate: "2013-05-01",
                 endDate: "2015-05-01",
                 location: "",
-                description: "Supported wide range of customers and employees at a technical level. Operated as a senior advisor, mentor and team aid. Fell within the top 1% of my area."
+                summary: "Resolved complex technical issues for customers and employees while serving as a senior advisor, mentor, and team resource; ranked within the top 1% of the area."
             },
             {
                 company: "University of Georgia",
@@ -38,7 +55,7 @@
                 startDate: "2013-01-01",
                 endDate: "2013-05-01",
                 location: "",
-                description: "Protected the assets and safety of campus dormitories. First freshman to achieve the position without prior experience."
+                summary: "Helped protect residents and university property across campus housing; became the first freshman selected for the position without prior experience."
             },
             {
                 company: "Moe's Southwest Grill",
@@ -46,19 +63,30 @@
                 startDate: "2011-06-01",
                 endDate: "2012-08-01",
                 location: "",
-                description: "Learned discipline of teamwork and leadership. Engaged with team in a learning and hard-working environment dedicated to improvement."
+                summary: "Developed an early foundation in teamwork, accountability, and hands-on leadership in a fast-paced service environment."
             }
         ];
 
-        // Calculate duration
+        function parseLocalDate(dateString) {
+            const [year, month, day] = dateString.split('-').map(Number);
+            return new Date(year, month - 1, day);
+        }
+
+        // Calculate duration without the UTC-to-local shift caused by new Date('YYYY-MM-DD').
         function calculateDuration(startDate, endDate = null) {
-            const start = new Date(startDate);
-            const end = endDate ? new Date(endDate) : new Date();
+            const start = parseLocalDate(startDate);
+            const end = endDate ? parseLocalDate(endDate) : new Date();
             
             const years = end.getFullYear() - start.getFullYear();
             const months = end.getMonth() - start.getMonth();
             
             let totalMonths = years * 12 + months;
+
+            if (end.getDate() < start.getDate()) {
+                totalMonths--;
+            }
+
+            totalMonths = Math.max(0, totalMonths);
             
             const yearsDisplay = Math.floor(totalMonths / 12);
             const monthsDisplay = totalMonths % 12;
@@ -86,23 +114,31 @@
                 return;
             }
             
+            container.replaceChildren();
+
             experiences.forEach((exp, index) => {
                 const duration = calculateDuration(exp.startDate, exp.endDate);
                 const startYear = exp.startDate.split('-')[0];
                 
                 const item = document.createElement('div');
                 item.className = 'timeline-item';
-                item.style.animationDelay = `${index * 0.2}s`;
+                item.dataset.reveal = '';
+                item.style.setProperty('--reveal-delay', `${Math.min(index, 3) * 80}ms`);
+
+                const highlights = exp.highlights?.length
+                    ? `<ul class="job-highlights">${exp.highlights.map(highlight => `<li>${highlight}</li>`).join('')}</ul>`
+                    : '';
                 
                 item.innerHTML = `
-                    <div class="timeline-content">
-                        <div class="company-name">${exp.company}</div>
-                        <div class="job-title">${exp.title}</div>
-                        <div class="job-duration">${duration.fullDuration} • ${startYear} - ${duration.endDateLabel}</div>
-                        ${exp.location ? `<div class="job-duration">${exp.location}</div>` : ''}
-                        <div class="job-description">${exp.description}</div>
-                    </div>
-                    <div class="timeline-dot"></div>
+                    <article class="timeline-content" aria-label="${exp.title} at ${exp.company}">
+                        <h3 class="company-name">${exp.company}</h3>
+                        <p class="job-title">${exp.title}</p>
+                        <p class="job-duration">${duration.fullDuration} • <time datetime="${exp.startDate}">${startYear}</time> - ${duration.endDateLabel}</p>
+                        ${exp.location ? `<p class="job-duration">${exp.location}</p>` : ''}
+                        <p class="job-summary">${exp.summary}</p>
+                        ${highlights}
+                    </article>
+                    <div class="timeline-dot" aria-hidden="true"></div>
                 `;
                 
                 container.appendChild(item);
@@ -116,6 +152,8 @@
             
             // Clear existing particles
             container.innerHTML = '';
+
+            if (reducedMotionQuery.matches) return;
             
             const particleCount = window.innerWidth < 768 ? 15 : 30;
             
@@ -125,63 +163,72 @@
                 particle.style.left = Math.random() * 100 + '%';
                 particle.style.width = Math.random() * 3 + 1 + 'px';
                 particle.style.height = particle.style.width;
-                particle.style.animationDuration = (Math.random() * 15 + 10) + 's';
-                particle.style.animationDelay = Math.random() * 15 + 's';
+                particle.style.setProperty('--particle-duration', `${Math.random() * 16 + 14}s`);
+                particle.style.setProperty('--particle-delay', `${Math.random() * -24}s`);
+                particle.style.setProperty('--particle-drift', `${Math.random() * 120 - 60}px`);
+                particle.style.setProperty('--particle-opacity', `${Math.random() * 0.1 + 0.05}`);
+                particle.style.setProperty('--particle-blur', `${Math.random() > 0.75 ? 1 : 0}px`);
                 container.appendChild(particle);
             }
-        }
-
-        // Smooth scrolling for navigation
-        function setupSmoothScrolling() {
-            document.querySelectorAll('.nav-link, .cta-button').forEach(link => {
-                link.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    const targetId = link.getAttribute('href');
-                    const target = document.querySelector(targetId);
-                    
-                    if (target) {
-                        target.scrollIntoView({
-                            behavior: 'smooth',
-                            block: 'start'
-                        });
-                        
-                        // Update active nav link
-                        document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
-                        if (link.classList.contains('nav-link')) {
-                            link.classList.add('active');
-                        }
-                    }
-                });
-            });
         }
 
         // Scroll indicator
         function updateScrollIndicator() {
             const scrollTop = window.pageYOffset;
             const docHeight = document.body.scrollHeight - window.innerHeight;
-            const scrollPercent = scrollTop / docHeight;
+            const scrollPercent = docHeight > 0 ? scrollTop / docHeight : 0;
             
             document.getElementById('scrollIndicator').style.transform = `scaleX(${scrollPercent})`;
         }
 
+        function setupAnchorScrolling() {
+            document.querySelectorAll('.nav-link, .cta-button').forEach(link => {
+                link.addEventListener('click', event => {
+                    const url = new URL(link.href, window.location.href);
+                    const isSamePage = url.origin === window.location.origin
+                        && url.pathname === window.location.pathname
+                        && url.search === window.location.search;
+                    const target = url.hash && document.getElementById(decodeURIComponent(url.hash.slice(1)));
+
+                    if (!isSamePage || !target) return;
+
+                    event.preventDefault();
+                    target.scrollIntoView({
+                        behavior: reducedMotionQuery.matches ? 'auto' : 'smooth',
+                        block: 'start'
+                    });
+                    history.pushState(null, '', url.hash);
+                });
+            });
+        }
+
         // Intersection Observer for animations
         function setupAnimations() {
+            const revealElements = Array.from(document.querySelectorAll('[data-reveal]'));
+
+            if (reducedMotionQuery.matches || !('IntersectionObserver' in window)) {
+                revealElements.forEach(element => element.classList.add('is-visible'));
+                return;
+            }
+
+            document.body.classList.add('reveal-ready');
+
+            document.querySelectorAll('.about-cards, .impact-grid, .contact-grid').forEach(group => {
+                Array.from(group.children).forEach((element, index) => {
+                    element.style.setProperty('--reveal-delay', `${index * 90}ms`);
+                });
+            });
+
             const observer = new IntersectionObserver((entries) => {
                 entries.forEach(entry => {
                     if (entry.isIntersecting) {
-                        entry.target.style.opacity = '1';
-                        entry.target.style.transform = 'translateY(0)';
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target);
                     }
                 });
-            }, { threshold: 0.1, rootMargin: '0px 0px -100px 0px' });
+            }, { threshold: 0.12, rootMargin: '0px 0px -60px 0px' });
 
-            // Apply initial styles and observe elements
-            document.querySelectorAll('.about-card, .timeline-item').forEach(el => {
-                el.style.opacity = '0';
-                el.style.transform = 'translateY(30px)';
-                el.style.transition = 'opacity 0.8s ease-out, transform 0.8s ease-out';
-                observer.observe(el);
-            });
+            revealElements.forEach(element => observer.observe(element));
         }
 
         // Navigation active state on scroll
@@ -214,9 +261,12 @@
                     link.classList.remove('active');
                     if (link.getAttribute('href') === `#${current}`) {
                         link.classList.add('active');
+                        link.setAttribute('aria-current', 'location');
+                    } else {
+                        link.removeAttribute('aria-current');
                     }
                 });
-            });
+            }, { passive: true });
         }
 
         // Konami Code Detection
@@ -255,6 +305,8 @@
                 this.lastTime = 0;
                 this.gameRunning = false;
                 this.isPaused = false;
+                this.restartButton = document.getElementById('restartTetris');
+                this.restartButton.hidden = true;
                 
                 this.colors = [
                     '#000000', // empty
@@ -268,7 +320,7 @@
                 ];
                 
                 this.pieces = [
-                    [[[1,1,1,1]]], // I
+                    [[[1,1,1,1]],[[1],[1],[1],[1]]], // I
                     [[[1,1],[1,1]]], // O
                     [[[0,1,0],[1,1,1]],[[1,0],[1,1],[1,0]],[[1,1,1],[0,1,0]],[[0,1],[1,1],[0,1]]], // T
                     [[[0,1,1],[1,1,0]],[[1,0],[1,1],[0,1]]], // S
@@ -448,9 +500,8 @@
                     this.lastTime = time;
                 }
                 
-                this.draw();
-                
                 if (this.gameRunning) {
+                    this.draw();
                     requestAnimationFrame(this.update.bind(this));
                 }
             }
@@ -471,6 +522,7 @@
             
             gameOver() {
                 this.gameRunning = false;
+                this.restartButton.hidden = false;
                 this.ctx.fillStyle = 'rgba(0, 0, 0, 0.8)';
                 this.ctx.fillRect(0, 0, this.canvas.width, this.canvas.height);
                 
@@ -480,10 +532,11 @@
                 this.ctx.fillText('GAME OVER', this.canvas.width / 2, this.canvas.height / 2);
                 
                 this.ctx.font = '16px Inter';
-                this.ctx.fillText('Press R to Restart', this.canvas.width / 2, this.canvas.height / 2 + 40);
+                this.ctx.fillText('Press R or Restart to play again', this.canvas.width / 2, this.canvas.height / 2 + 40);
             }
             
             restart() {
+                this.restartButton.hidden = true;
                 this.board = Array(this.rows).fill().map(() => Array(this.cols).fill(0));
                 this.score = 0;
                 this.lines = 0;
@@ -503,18 +556,90 @@
 
         let tetrisGame = null;
         let tetrisKeyHandler = null;
+        let previousFocus = null;
+
+        function runTetrisAction(action) {
+            if (!tetrisGame) return;
+            if (!tetrisGame.gameRunning && action !== 'restart') return;
+
+            switch (action) {
+                case 'left':
+                    tetrisGame.move(-1);
+                    break;
+                case 'right':
+                    tetrisGame.move(1);
+                    break;
+                case 'down':
+                    tetrisGame.drop();
+                    break;
+                case 'rotate':
+                    tetrisGame.rotate();
+                    break;
+                case 'drop':
+                    tetrisGame.hardDrop();
+                    break;
+                case 'pause':
+                    tetrisGame.pause();
+                    break;
+                case 'restart':
+                    if (!tetrisGame.gameRunning) {
+                        tetrisGame.restart();
+                    }
+                    return;
+            }
+
+            if (tetrisGame.gameRunning) {
+                tetrisGame.draw();
+            }
+        }
+
+        function trapModalFocus(event, modal) {
+            const focusableElements = Array.from(
+                modal.querySelectorAll('button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])')
+            ).filter(element => element.getClientRects().length > 0);
+
+            if (focusableElements.length === 0) return;
+
+            const firstElement = focusableElements[0];
+            const lastElement = focusableElements[focusableElements.length - 1];
+
+            if (event.shiftKey && document.activeElement === firstElement) {
+                event.preventDefault();
+                lastElement.focus();
+            } else if (!event.shiftKey && document.activeElement === lastElement) {
+                event.preventDefault();
+                firstElement.focus();
+            }
+        }
 
         function showTetris() {
             const modal = document.getElementById('tetrisModal');
             const canvas = document.getElementById('tetrisBoard');
+            const closeButton = document.getElementById('closeTetris');
+
+            if (!modal.hidden) return;
             
-            modal.style.display = 'flex';
+            previousFocus = document.activeElement;
+            modal.hidden = false;
+            document.documentElement.classList.add('modal-open');
+            document.body.classList.add('modal-open');
             
             // Create new game instance
             tetrisGame = new TetrisGame(canvas);
             
             // Set up controls
             tetrisKeyHandler = (e) => {
+                if (e.key === 'Escape') {
+                    e.preventDefault();
+                    closeTetris();
+                    return;
+                }
+
+                if (e.key === 'Tab') {
+                    trapModalFocus(e, modal);
+                    return;
+                }
+
                 if (!tetrisGame || !tetrisGame.gameRunning) {
                     if (e.key === 'r' || e.key === 'R') {
                         tetrisGame.restart();
@@ -525,39 +650,42 @@
                 switch(e.key) {
                     case 'ArrowLeft':
                         e.preventDefault();
-                        tetrisGame.move(-1);
+                        runTetrisAction('left');
                         break;
                     case 'ArrowRight':
                         e.preventDefault();
-                        tetrisGame.move(1);
+                        runTetrisAction('right');
                         break;
                     case 'ArrowDown':
                         e.preventDefault();
-                        tetrisGame.drop();
+                        runTetrisAction('down');
                         break;
                     case 'ArrowUp':
                         e.preventDefault();
-                        tetrisGame.rotate();
+                        runTetrisAction('rotate');
                         break;
                     case ' ':
                         e.preventDefault();
-                        tetrisGame.hardDrop();
+                        runTetrisAction('drop');
                         break;
                     case 'p':
                     case 'P':
                         e.preventDefault();
-                        tetrisGame.pause();
+                        runTetrisAction('pause');
                         break;
                 }
             };
             
             document.addEventListener('keydown', tetrisKeyHandler);
             tetrisGame.start();
+            closeButton.focus();
         }
 
         function closeTetris() {
             const modal = document.getElementById('tetrisModal');
-            modal.style.display = 'none';
+            modal.hidden = true;
+            document.documentElement.classList.remove('modal-open');
+            document.body.classList.remove('modal-open');
             
             if (tetrisGame) {
                 tetrisGame.gameRunning = false;
@@ -568,21 +696,39 @@
                 document.removeEventListener('keydown', tetrisKeyHandler);
                 tetrisKeyHandler = null;
             }
+
+            if (previousFocus instanceof HTMLElement) {
+                previousFocus.focus();
+            }
+
+            previousFocus = null;
         }
 
         // Initialize everything
         document.addEventListener('DOMContentLoaded', () => {
             createParticles();
             renderTimeline();
-            setupSmoothScrolling();
             setupAnimations();
+            setupAnchorScrolling();
             setupNavigation();
 
             document.addEventListener('keydown', handleKonamiCode);
-            
-            window.addEventListener('scroll', updateScrollIndicator);
-            window.addEventListener('resize', () => {
-                document.getElementById('bgAnimation').innerHTML = '';
-                createParticles();
+
+            document.getElementById('currentYear').textContent = new Date().getFullYear();
+            document.getElementById('closeTetris').addEventListener('click', closeTetris);
+            document.getElementById('openTetris').addEventListener('click', showTetris);
+            document.querySelectorAll('[data-tetris-action]').forEach(button => {
+                button.addEventListener('click', () => runTetrisAction(button.dataset.tetrisAction));
             });
+
+            reducedMotionQuery.addEventListener('change', createParticles);
+            window.addEventListener('scroll', updateScrollIndicator, { passive: true });
+
+            let resizeTimer;
+            window.addEventListener('resize', () => {
+                window.clearTimeout(resizeTimer);
+                resizeTimer = window.setTimeout(createParticles, 150);
+            });
+
+            updateScrollIndicator();
         });
