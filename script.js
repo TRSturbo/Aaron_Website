@@ -266,7 +266,7 @@
                         link.removeAttribute('aria-current');
                     }
                 });
-            });
+            }, { passive: true });
         }
 
         // Konami Code Detection

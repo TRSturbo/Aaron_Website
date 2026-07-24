@@ -92,6 +92,28 @@ def check(condition, message, failures):
         failures.append(message)
 
 
+def validate_json_file(path, label, failures):
+    try:
+        content = path.read_text(encoding="utf-8")
+    except FileNotFoundError:
+        failures.append(f"Missing {label}")
+        return
+
+    try:
+        json.loads(content)
+    except json.JSONDecodeError as error:
+        failures.append(f"Invalid {label}: {error}")
+
+
+def validate_xml_file(path, label, failures):
+    try:
+        ET.parse(path)
+    except FileNotFoundError:
+        failures.append(f"Missing {label}")
+    except ET.ParseError as error:
+        failures.append(f"Invalid {label}: {error}")
+
+
 def main():
     failures = []
     parser = SiteParser()
@@ -109,6 +131,14 @@ def main():
         and "setupAnchorScrolling();" in script
         and "scrollIntoView" in script,
         "Intentional in-page links must retain scoped smooth scrolling",
+        failures,
+    )
+    navigation_start = script.find("function setupNavigation()")
+    navigation_end = script.find("// Konami Code", navigation_start)
+    navigation_setup = script[navigation_start:navigation_end]
+    check(
+        "}, { passive: true });" in navigation_setup,
+        "Navigation scroll tracking must use a passive listener",
         failures,
     )
 
@@ -308,15 +338,8 @@ def main():
     except json.JSONDecodeError as error:
         failures.append(f"Invalid JSON-LD: {error}")
 
-    try:
-        json.loads((ROOT / "manifest.json").read_text(encoding="utf-8"))
-    except json.JSONDecodeError as error:
-        failures.append(f"Invalid manifest.json: {error}")
-
-    try:
-        ET.parse(ROOT / "sitemap.xml")
-    except ET.ParseError as error:
-        failures.append(f"Invalid sitemap.xml: {error}")
+    validate_json_file(ROOT / "manifest.json", "manifest.json", failures)
+    validate_xml_file(ROOT / "sitemap.xml", "sitemap.xml", failures)
 
     if failures:
         for failure in failures:
