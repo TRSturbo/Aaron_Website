@@ -91,34 +91,6 @@ meta[name="theme-color"] {
     content: #04A1FF;
 }
 
-/* Animated background particles */
-.bg-animation {
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    z-index: -1; /* Ensure it stays behind everything */
-    overflow: hidden;
-}
-
-.particle {
-    position: absolute;
-    background: var(--accent-primary);
-    border-radius: 50%;
-    opacity: 0;
-    filter: blur(var(--particle-blur, 0));
-    animation: float var(--particle-duration, 20s) infinite linear;
-    animation-delay: var(--particle-delay, 0s);
-}
-
-@keyframes float {
-    0% { opacity: 0; transform: translate3d(0, 105vh, 0) scale(0.7); }
-    12% { opacity: var(--particle-opacity, 0.12); }
-    85% { opacity: var(--particle-opacity, 0.12); }
-    100% { opacity: 0; transform: translate3d(var(--particle-drift, 30px), -10vh, 0) scale(1.15); }
-}
-
 /* Navigation */
 nav {
     position: fixed;
@@ -179,11 +151,25 @@ nav a:hover, nav a.active {
     justify-content: center;
     padding: 8rem 2rem 3rem;
     position: relative;
+    isolation: isolate;
+    overflow: hidden;
+}
+
+.hero-animation {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 0;
+    pointer-events: none;
+    opacity: 0.72;
 }
 
 .hero-content {
     text-align: center;
     max-width: 920px;
+    position: relative;
+    z-index: 1;
 }
 
 .hero-avatar {
@@ -326,56 +312,20 @@ section {
     scroll-margin-top: 7rem;
 }
 
-/* Circuit dividers */
-.circuit-divider {
+.animation-companion {
     width: 100%;
-    height: 140px;
+    height: clamp(150px, 18vw, 230px);
     position: relative;
     overflow: hidden;
     background: var(--bg-primary);
-    margin: 0;
-    z-index: 1;
+    pointer-events: none;
 }
 
-.circuit-svg {
+.animation-companion canvas {
     width: 100%;
     height: 100%;
-    opacity: 0.3;
-}
-
-.circuit-path {
-    fill: none;
-    stroke: var(--accent-primary);
-    stroke-width: 1;
-    stroke-dasharray: 5,5;
-    animation: circuit-flow 8s linear infinite;
-}
-
-.circuit-node {
-    fill: var(--accent-primary);
-    animation: node-pulse 2s ease-in-out infinite alternate;
-}
-
-.circuit-connection {
-    stroke: var(--accent-secondary);
-    stroke-width: 0.5;
-    opacity: 0.6;
-    animation: connection-glow 3s ease-in-out infinite alternate;
-}
-
-@keyframes circuit-flow {
-    0% { stroke-dashoffset: 0; }
-    100% { stroke-dashoffset: 100; }
-}
-
-@keyframes node-pulse {
-    0% { opacity: 0.5; transform: scale(1); }
-    100% { opacity: 1; transform: scale(1.2); }
-}
-
-@keyframes connection-glow {
-    0% { opacity: 0.3; }
-    100% { opacity: 0.8; }
+    display: block;
+    opacity: 0.62;
 }
 
 .section-header {
@@ -783,10 +733,6 @@ section {
         scroll-margin-top: 5rem;
     }
 
-    .circuit-divider {
-        height: 90px;
-    }
-
     .timeline-line {
         left: 1rem;
     }
@@ -1090,10 +1036,6 @@ kbd {
         animation-duration: 0.01ms !important;
         animation-iteration-count: 1 !important;
         transition-duration: 0.01ms !important;
-    }
-
-    .particle {
-        display: none;
     }
 
     .hero-reveal,
