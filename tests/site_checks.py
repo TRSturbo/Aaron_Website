@@ -152,9 +152,27 @@ def main():
     check(bool(compact_tetris), "Tetris needs a compact narrow/coarse-pointer layout", failures)
     if compact_tetris:
         compact_styles = compact_tetris.group(1)
+        compact_board = re.search(r"(?ms)^\s*\.tetris-board\s*\{(.*?)^\s*\}", compact_styles)
+        compact_info = re.search(r"(?ms)^\s*\.tetris-info\s*\{(.*?)^\s*\}", compact_styles)
+        compact_controls = re.search(r"(?ms)^\s*\.tetris-touch-controls\s*\{(.*?)^\s*\}", compact_styles)
         check(
-            re.search(r"\.tetris-board\s*\{[^}]*height\s*:\s*min\(42svh,\s*360px\)", compact_styles),
+            compact_board and re.search(r"height\s*:\s*min\(42svh,\s*360px\)", compact_board.group(1)),
             "Compact Tetris board must use the viewport-relative height cap",
+            failures,
+        )
+        check(
+            compact_board and re.search(r"width\s*:\s*auto\s*;", compact_board.group(1)),
+            "Compact Tetris board must retain its proportional width",
+            failures,
+        )
+        check(
+            compact_board and re.search(r"max-width\s*:\s*100%\s*;", compact_board.group(1)),
+            "Compact Tetris board must not exceed the available width",
+            failures,
+        )
+        check(
+            compact_info and re.search(r"grid-template-columns\s*:\s*repeat\(3,\s*1fr\)\s*;", compact_info.group(1)),
+            "Compact Tetris score row must retain three columns",
             failures,
         )
         check(
@@ -162,6 +180,22 @@ def main():
             "Compact Tetris layout must hide the keyboard-controls panel",
             failures,
         )
+        check(
+            compact_controls and re.search(r"display\s*:\s*grid\s*;", compact_controls.group(1)),
+            "Compact Tetris layout must display touch controls as a grid",
+            failures,
+        )
+    touch_buttons = re.search(r"(?ms)^\.tetris-touch-controls\s+button\s*\{(.*?)^\}", styles)
+    touch_min_height = (
+        re.search(r"min-height\s*:\s*([0-9]+(?:\.[0-9]+)?)px\s*;", touch_buttons.group(1))
+        if touch_buttons
+        else None
+    )
+    check(
+        touch_min_height and float(touch_min_height.group(1)) >= 44,
+        "Tetris touch buttons must be at least 44px tall",
+        failures,
+    )
     check(
         any(button.get("id") == "closeTetris" and button.get("aria-label") for button in parser.buttons),
         "Tetris close button needs an accessible name",
