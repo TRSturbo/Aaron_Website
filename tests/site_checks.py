@@ -170,6 +170,36 @@ def main():
     local_scripts = [script for script in parser.scripts if script.get("src") == "script.js"]
     check(len(local_scripts) == 1 and "defer" in local_scripts[0], "script.js must load once with defer", failures)
 
+    index_text = (ROOT / "index.html").read_text(encoding="utf-8")
+    animations = (ROOT / "animations.js").read_text(encoding="utf-8")
+
+    animation_scripts = [item for item in parser.scripts if item.get("src") == "animations.js"]
+    check(
+        len(animation_scripts) == 1 and "defer" in animation_scripts[0],
+        "animations.js must load once with defer",
+        failures,
+    )
+    check(parser.ids.count("heroAnimation") == 1, "Hero animation canvas is required", failures)
+    check(parser.ids.count("companionAnimation") == 1, "Companion animation canvas is required", failures)
+    check('id="bgAnimation"' not in index_text, "Legacy particle mount must be removed", failures)
+    check("circuit-divider" not in index_text, "Legacy circuit dividers must be removed", failures)
+    check("function createParticles()" not in script, "Legacy particle generator must be removed", failures)
+    check(
+        all(identifier in animations for identifier in ("flow", "topology", "blueprint")),
+        "All approved animation packs must be registered",
+        failures,
+    )
+    for lifecycle_marker in (
+        "requestAnimationFrame",
+        "visibilitychange",
+        "IntersectionObserver",
+        "ResizeObserver",
+        "prefers-reduced-motion: reduce",
+        "pointermove",
+    ):
+        check(lifecycle_marker in animations, f"Animation lifecycle is missing {lifecycle_marker}", failures)
+    check("preventDefault" not in animations, "Animation code must not cancel native input", failures)
+
     check(
         len(parser.dialogs) == 1 and parser.dialogs[0].get("aria-modal") == "true",
         "Tetris must be exposed as one modal dialog",

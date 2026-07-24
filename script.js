@@ -145,33 +145,6 @@
             });
         }
 
-        // Background animation
-        function createParticles() {
-            const container = document.getElementById('bgAnimation');
-            if (!container) return;
-            
-            // Clear existing particles
-            container.innerHTML = '';
-
-            if (reducedMotionQuery.matches) return;
-            
-            const particleCount = window.innerWidth < 768 ? 15 : 30;
-            
-            for (let i = 0; i < particleCount; i++) {
-                const particle = document.createElement('div');
-                particle.className = 'particle';
-                particle.style.left = Math.random() * 100 + '%';
-                particle.style.width = Math.random() * 3 + 1 + 'px';
-                particle.style.height = particle.style.width;
-                particle.style.setProperty('--particle-duration', `${Math.random() * 16 + 14}s`);
-                particle.style.setProperty('--particle-delay', `${Math.random() * -24}s`);
-                particle.style.setProperty('--particle-drift', `${Math.random() * 120 - 60}px`);
-                particle.style.setProperty('--particle-opacity', `${Math.random() * 0.1 + 0.05}`);
-                particle.style.setProperty('--particle-blur', `${Math.random() > 0.75 ? 1 : 0}px`);
-                container.appendChild(particle);
-            }
-        }
-
         // Scroll indicator
         function updateScrollIndicator() {
             const scrollTop = window.pageYOffset;
@@ -706,7 +679,6 @@
 
         // Initialize everything
         document.addEventListener('DOMContentLoaded', () => {
-            createParticles();
             renderTimeline();
             setupAnimations();
             setupAnchorScrolling();
@@ -721,14 +693,7 @@
                 button.addEventListener('click', () => runTetrisAction(button.dataset.tetrisAction));
             });
 
-            reducedMotionQuery.addEventListener('change', createParticles);
             window.addEventListener('scroll', updateScrollIndicator, { passive: true });
-
-            let resizeTimer;
-            window.addEventListener('resize', () => {
-                window.clearTimeout(resizeTimer);
-                resizeTimer = window.setTimeout(createParticles, 150);
-            });
 
             updateScrollIndicator();
         });
